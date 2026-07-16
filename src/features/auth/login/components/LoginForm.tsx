@@ -17,14 +17,14 @@ export function LoginForm() {
   }
 
   return (
-    <div className="flex min-h-dvh w-full flex-col justify-center bg-surface px-6 py-12">
+    <div className="relative min-h-dvh w-full bg-surface px-6 pb-28 pt-14">
       <div className="mx-auto w-full max-w-sm">
-        <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-main text-white">
-          <MapPin size={22} />
+        <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-main text-white">
+          <MapPin size={26} />
         </span>
 
-        <h1 className="mt-6 text-2xl font-bold text-black">Selamat datang kembali 👋</h1>
-        <p className="mt-2 text-sm text-black/60">
+        <h1 className="mt-6 text-3xl font-bold leading-tight text-black">Selamat datang kembali 👋</h1>
+        <p className="mt-2 text-base text-black/60">
           Masuk dengan email & password akun Anda — satu akun untuk semua peran Anda.
         </p>
 
@@ -37,7 +37,7 @@ export function LoginForm() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="nama@email.com"
               required
-              className="rounded-full border border-black/10 px-5 py-3 text-sm outline-none focus:border-main focus:ring-2 focus:ring-main/20"
+              className="rounded-lg border border-black/10 px-4 py-3 text-sm outline-none focus:border-main focus:ring-2 focus:ring-main/20"
             />
           </label>
 
@@ -49,7 +49,7 @@ export function LoginForm() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               required
-              className="rounded-full border border-black/10 px-5 py-3 text-sm outline-none focus:border-main focus:ring-2 focus:ring-main/20"
+              className="rounded-lg border border-black/10 px-4 py-3 text-sm outline-none focus:border-main focus:ring-2 focus:ring-main/20"
             />
           </label>
 
@@ -65,13 +65,16 @@ export function LoginForm() {
           Peran akun (Donatur, Admin Posko, Toko, Kurir) terdeteksi otomatis — Anda diarahkan ke beranda yang
           sesuai.
         </div>
+      </div>
 
-        <p className="mt-6 text-center text-sm text-black/60">
-          Belum punya akun?{" "}
-          <Link href="/register" className="font-semibold text-main">
-            Daftar
-          </Link>
-        </p>
+      <div
+        className="fixed inset-x-0 bottom-0 border-t border-black/5 bg-surface px-6 pt-4 text-center text-sm text-black/60"
+        style={{ paddingBottom: "max(1.5rem, env(safe-area-inset-bottom))" }}
+      >
+        Belum punya akun?{" "}
+        <Link href="/register" className="font-semibold text-main">
+          Daftar
+        </Link>
       </div>
     </div>
   );

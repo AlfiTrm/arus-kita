@@ -1,11 +1,18 @@
 import { env } from "@/shared/config/env";
 
+function extractErrorMessage(body: unknown, status: number): string {
+  if (body && typeof body === "object" && "message" in body && typeof body.message === "string") {
+    return body.message;
+  }
+  return `API error ${status}`;
+}
+
 export class ApiError extends Error {
   constructor(
     public status: number,
     public body: unknown,
   ) {
-    super(`API error ${status}`);
+    super(extractErrorMessage(body, status));
   }
 }
 
