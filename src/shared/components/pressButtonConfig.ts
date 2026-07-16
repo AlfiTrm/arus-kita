@@ -55,11 +55,11 @@ export const PRESS_BUTTON_VARIANTS = {
     mode: "press",
   },
   outline: {
-    base: "border border-main bg-transparent text-main hover:bg-main/5",
-    shadow: "none",
-    hoverShadow: "none",
-    pressShadow: "none",
-    mode: "flat",
+    base: "border border-main bg-surface text-main",
+    shadow: "0 4px 0 0 var(--color-outline-shadow)",
+    hoverShadow: "0 2px 0 0 var(--color-outline-shadow)",
+    pressShadow: "0 1px 0 0 var(--color-outline-shadow)",
+    mode: "press",
   },
   ghost: {
     base: "bg-transparent text-main hover:bg-main/10",

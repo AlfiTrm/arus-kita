@@ -34,7 +34,7 @@ export default function PressButton({
       whileTap={motionState.whileTap}
       transition={{ type: "spring", stiffness: 500, damping: 30 }}
       className={twMerge(
-        "cursor-pointer rounded-lg px-5 py-2.5 text-sm font-semibold",
+        "cursor-pointer rounded-full px-5 py-2.5 text-sm font-semibold",
         "transition-colors duration-150",
         "disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none",
         resolvedVariant.base,

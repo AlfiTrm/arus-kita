@@ -15,12 +15,21 @@
   --color-success-shadow: color-mix(in srgb, var(--color-success) 100%, black 25%);
   --color-warning-shadow: color-mix(in srgb, var(--color-warning) 100%, black 25%);
   --color-error-shadow: color-mix(in srgb, var(--color-error) 100%, black 25%);
+  --color-outline-shadow: color-mix(in srgb, var(--color-black) 20%, transparent);
 
   --font-sans: var(--font-poppins), sans-serif;
 }
 
 body {
   font-family: var(--font-sans);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+button,
+a,
+[role="button"] {
+  touch-action: manipulation;
 }
 
 @utility container {

@@ -5,10 +5,10 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "PijarNusa - Ekosistem Logistik Kebencanaan",
     short_name: "PijarNusa",
     description: "Platform logistik kebencanaan terpadu: peta bencana real-time, pesanan logistik otonom, rantai kustodi.",
-    start_url: "/",
+    start_url: "/splashscreen",
     display: "standalone",
-    background_color: "#ffffff",
-    theme_color: "#dc2626",
+    background_color: "#feffff",
+    theme_color: "#028090",
     icons: [
       {
         src: "/icon-192x192.png",
