@@ -11,6 +11,7 @@ import { RoleSelectStep } from "@/features/auth/register/components/RoleSelectSt
 import { SuccessStep } from "@/features/auth/register/components/SuccessStep";
 import { adminRegisterService } from "@/features/auth/register/services/adminRegisterService";
 import { ROLE_LABELS, type RegisterRole } from "@/features/auth/register/types/register.types";
+import { saveSession } from "@/shared/utils/authSession";
 
 const TOTAL_STEPS = 6;
 const DEFAULT_OTP_SECONDS = 300;
@@ -74,7 +75,7 @@ export default function RegisterPage() {
         profile.nik,
         profile.affiliation,
       );
-      localStorage.setItem("pijarnusa_token", result.token);
+      saveSession(result.token, result.user);
     }
     setStep(6);
   }
