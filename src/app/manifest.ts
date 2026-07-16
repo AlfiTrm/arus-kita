@@ -7,7 +7,7 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "Platform logistik kebencanaan terpadu: peta bencana real-time, pesanan logistik otonom, rantai kustodi.",
     start_url: "/splashscreen",
     display: "standalone",
-    background_color: "#feffff",
+    background_color: "#028090",
     theme_color: "#028090",
     icons: [
       {

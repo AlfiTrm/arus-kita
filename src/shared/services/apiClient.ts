@@ -14,7 +14,10 @@ type RequestOptions = Omit<RequestInit, "body"> & { body?: unknown };
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const { body, headers, ...rest } = options;
 
-  const res = await fetch(`${env.apiBaseUrl}${path}`, {
+  const base = env.apiBaseUrl.replace(/\/+$/, "");
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+
+  const res = await fetch(`${base}${normalizedPath}`, {
     ...rest,
     headers: {
       "Content-Type": "application/json",

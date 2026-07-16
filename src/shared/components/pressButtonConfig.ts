@@ -61,6 +61,13 @@ export const PRESS_BUTTON_VARIANTS = {
     pressShadow: "0 1px 0 0 var(--color-outline-shadow)",
     mode: "press",
   },
+  outlineInverse: {
+    base: "border border-white/40 bg-transparent text-white",
+    shadow: "0 4px 0 0 var(--color-outline-inverse-shadow)",
+    hoverShadow: "0 2px 0 0 var(--color-outline-inverse-shadow)",
+    pressShadow: "0 1px 0 0 var(--color-outline-inverse-shadow)",
+    mode: "press",
+  },
   ghost: {
     base: "bg-transparent text-main hover:bg-main/10",
     shadow: "none",
