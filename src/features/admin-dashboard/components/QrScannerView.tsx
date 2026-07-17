@@ -1,19 +1,69 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { AlertTriangle, Check, ChevronLeft, RotateCcw, ScanLine } from "lucide-react";
+import { AlertTriangle, Check, ChevronLeft, KeyRound, RotateCcw, ScanLine, TriangleAlert } from "lucide-react";
 import PressButton from "@/shared/components/PressButton";
+import { useGeolocation } from "@/shared/hooks/useGeolocation";
+import { adminCustodyService } from "../services/adminCustodyService";
 import { useQrScanner } from "../hooks/useQrScanner";
+import type { CustodyPostHandoffData } from "../types/adminCustody.types";
+
+function ScanFrame() {
+  return (
+    <div className="relative h-56 w-56">
+      <span className="absolute top-0 left-0 h-8 w-8 rounded-tl-2xl border-t-2 border-l-2 border-white/80" />
+      <span className="absolute top-0 right-0 h-8 w-8 rounded-tr-2xl border-t-2 border-r-2 border-white/80" />
+      <span className="absolute bottom-0 left-0 h-8 w-8 rounded-bl-2xl border-b-2 border-l-2 border-white/80" />
+      <span className="absolute right-0 bottom-0 h-8 w-8 rounded-br-2xl border-r-2 border-b-2 border-white/80" />
+      <span className="absolute inset-x-6 top-1/2 h-px -translate-y-1/2 bg-main/80" />
+      <span className="absolute inset-x-0 top-1/2 -translate-y-1/2 text-center text-[10px] tracking-wide text-white/40">
+        arahkan ke QR di layar kurir
+      </span>
+    </div>
+  );
+}
 
 export function QrScannerView({ eventTitle, eventCode }: { eventTitle: string; eventCode: string }) {
   const router = useRouter();
   const { videoRef, status, result, start, reset } = useQrScanner();
+  const { latitude, longitude, error: geoError } = useGeolocation();
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [handoff, setHandoff] = useState<CustodyPostHandoffData | null>(null);
+  const submittedForRef = useRef<string | null>(null);
 
   useEffect(() => {
     start();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- start once on mount, camera lifecycle owned by the hook
   }, []);
+
+  useEffect(() => {
+    if (status !== "detected" || !result || latitude === null || longitude === null) return;
+    if (submittedForRef.current === result) return;
+    submittedForRef.current = result;
+
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    adminCustodyService
+      .postHandoff({
+        qrPayload: result,
+        latitude,
+        longitude,
+        idempotencyKey: `post-handoff-${result.slice(0, 40)}`,
+      })
+      .then((data) => setHandoff(data))
+      .catch((err) => setSubmitError(err instanceof Error ? err.message : "Gagal memverifikasi kustodi"))
+      .finally(() => setIsSubmitting(false));
+  }, [status, result, latitude, longitude]);
+
+  function retryHandoff() {
+    submittedForRef.current = null;
+    setSubmitError(null);
+    reset();
+  }
 
   return (
     <div className="flex h-dvh flex-col bg-black">
@@ -27,7 +77,7 @@ export function QrScannerView({ eventTitle, eventCode }: { eventTitle: string; e
           <ChevronLeft size={18} />
         </button>
         <div className="min-w-0">
-          <h1 className="truncate text-sm font-semibold text-white">Scan QR Kurir</h1>
+          <h1 className="truncate text-sm font-semibold text-white">Terima Barang dari Kurir</h1>
           <p className="truncate text-xs text-white/50">
             {eventCode} · {eventTitle}
           </p>
@@ -38,8 +88,13 @@ export function QrScannerView({ eventTitle, eventCode }: { eventTitle: string; e
         <video ref={videoRef} muted playsInline className="h-full w-full object-cover" />
 
         {status === "scanning" && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="h-56 w-56 rounded-3xl border-2 border-white/80" />
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-5">
+            <ScanFrame />
+            <div className="px-8 text-center">
+              <p className="text-sm font-semibold text-white">Scan = kustodi berpindah ke posko Anda</p>
+              <p className="mt-1 text-xs text-white/50">QR ganti tiap 30 detik, tervalidasi otomatis.</p>
+              {geoError && <p className="mt-2 text-xs text-warning">{geoError}</p>}
+            </div>
           </div>
         )}
 
@@ -74,29 +129,69 @@ export function QrScannerView({ eventTitle, eventCode }: { eventTitle: string; e
         )}
       </div>
 
+      {status === "scanning" && (
+        <div className="flex shrink-0 justify-center gap-3 px-6 pb-6">
+          <button
+            type="button"
+            className="flex items-center gap-1.5 rounded-full bg-white/10 px-4 py-2.5 text-xs font-semibold text-white"
+          >
+            <KeyRound size={14} /> Masukkan PIN
+          </button>
+          <button
+            type="button"
+            className="flex items-center gap-1.5 rounded-full bg-white/10 px-4 py-2.5 text-xs font-semibold text-white"
+          >
+            <TriangleAlert size={14} /> Barang tidak sesuai?
+          </button>
+        </div>
+      )}
+
       {status === "detected" && result && (
         <div
           className="shrink-0 rounded-t-3xl bg-surface px-6 pt-6"
           style={{ paddingBottom: "max(1.5rem, env(safe-area-inset-bottom))" }}
         >
-          <div className="flex items-center gap-2">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-success/10 text-success">
-              <Check size={18} />
-            </span>
-            <div className="min-w-0">
-              <p className="text-sm font-semibold text-black">QR terbaca</p>
-              <p className="truncate text-xs text-black/50">{result}</p>
+          {isSubmitting ? (
+            <div className="flex items-center gap-2">
+              <span className="flex h-9 w-9 shrink-0 animate-pulse items-center justify-center rounded-full bg-main/10 text-main">
+                <ScanLine size={18} />
+              </span>
+              <p className="text-sm font-semibold text-black">Memverifikasi kustodi...</p>
             </div>
-          </div>
-
-          <div className="mt-4 flex gap-2">
-            <PressButton variant="secondary" className="flex flex-1 items-center justify-center gap-1.5" onClick={reset}>
-              <RotateCcw size={14} /> Scan lagi
-            </PressButton>
-            <PressButton variant="primary" className="flex-1" onClick={() => router.back()}>
-              Kembali
-            </PressButton>
-          </div>
+          ) : handoff ? (
+            <>
+              <div className="flex items-center gap-2">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-success/10 text-success">
+                  <Check size={18} />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-black">Kustodi berpindah</p>
+                  <p className="truncate text-xs text-black/50">hash {handoff.short_current_hash}</p>
+                </div>
+              </div>
+              <PressButton
+                variant="primary"
+                className="mt-4 w-full"
+                onClick={() => router.push(`/dashboard/admin/order/${handoff.order_id}/pembagian`)}
+              >
+                Lanjut ke Pembagian Bantuan
+              </PressButton>
+            </>
+          ) : submitError ? (
+            <>
+              <div className="flex items-center gap-2">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-error/10 text-error">
+                  <AlertTriangle size={18} />
+                </span>
+                <p className="text-sm font-semibold text-error">{submitError}</p>
+              </div>
+              <PressButton variant="secondary" className="mt-4 flex w-full items-center justify-center gap-1.5" onClick={retryHandoff}>
+                <RotateCcw size={14} /> Scan lagi
+              </PressButton>
+            </>
+          ) : (
+            <p className="text-sm text-black/50">Menunggu lokasi GPS...</p>
+          )}
         </div>
       )}
     </div>
