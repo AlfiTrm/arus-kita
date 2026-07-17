@@ -20,8 +20,32 @@ export function useStoreOrderView() {
   const currentOrder = items[0];
   const history = items.slice(1);
 
+  async function handleContinueQr(orderId: string) {
+    setIsAccepting(true);
+    try {
+      const res = await shopService.refreshHandoffToken(orderId);
+      sessionStorage.setItem("store_order_qr", JSON.stringify(res.data));
+      router.push(`/dashboard/toko/orders/${orderId}/qr`);
+    } catch (err) {
+      console.error(err);
+      alert("Gagal memuat QR");
+    } finally {
+      setIsAccepting(false);
+    }
+  }
+
   async function handleAccept() {
     if (!currentOrder) return;
+
+    if (currentOrder.order_status === "ready_for_pickup") {
+      return handleContinueQr(currentOrder.order_id);
+    }
+
+    if (currentOrder.order_status === "accepted") {
+      router.push(`/dashboard/toko/orders/${currentOrder.order_id}`);
+      return;
+    }
+
     setIsAccepting(true);
     try {
       await shopService.acceptOrder(currentOrder.order_id);
@@ -46,6 +70,7 @@ export function useStoreOrderView() {
     reputationScore,
     currentOrder,
     history,
-    handleAccept
+    handleAccept,
+    handleContinueQr
   };
 }

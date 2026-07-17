@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, MapPin } from "lucide-react";
+import { ChevronLeft, MapPin, SignalHigh } from "lucide-react";
 import QRCode from "qrcode";
 import type { StoreOrderReadyData } from "../types/shop.types";
 
@@ -98,12 +98,11 @@ export function StoreOrderQR({ orderId }: { orderId: string }) {
             <p className="text-[10px] font-medium text-white/60">berlaku 30 dtk &middot; sekali pakai</p>
           </div>
           <div className="mt-4 flex justify-between gap-2">
-            {qrData.fallback_pin.split("").map((digit, i) => (
+            {[...Array(6)].map((_, i) => (
               <div
                 key={i}
-                className="flex aspect-square flex-1 items-center justify-center rounded-xl bg-white text-2xl font-black text-black"
+                className="flex aspect-square flex-1 items-center justify-center rounded-xl bg-white text-xl sm:text-2xl font-black text-black"
               >
-                {digit}
               </div>
             ))}
           </div>
@@ -112,8 +111,8 @@ export function StoreOrderQR({ orderId }: { orderId: string }) {
 
       <div className="mt-4 px-6">
         <div className="flex items-start gap-3 rounded-xl bg-white/10 p-4">
-          <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-white/20 text-[10px] font-bold text-white">
-            <span className="translate-y-[-1px]">M</span>
+          <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-white/20 text-white">
+            <SignalHigh className="h-3 w-3" />
           </div>
           <p className="text-[11px] font-medium leading-relaxed text-white">
             Token di-cache 90 detik &mdash; tetap dapat divalidasi walau sinyal sempat putus.
