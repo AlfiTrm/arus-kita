@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { ArrowRight, Zap } from "lucide-react";
 import PressButton from "@/shared/components/PressButton";
 import { useCameraCapture } from "../hooks/useCameraCapture";
-import { useGeolocation } from "../hooks/useGeolocation";
+import { useGeolocation } from "@/shared/hooks/useGeolocation";
 import { CapturedPhotoReview } from "./CapturedPhotoReview";
 import type { EventPhoto } from "../types/createEvent.types";
 

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, Flag, MapPin, Share2, ShieldCheck } from "lucide-react";
+import { ChevronLeft, MapPin, Share2, ShieldCheck } from "lucide-react";
 import PressButton from "@/shared/components/PressButton";
 import { formatRupiah } from "@/shared/utils/formatCurrency";
 import type { DonorPostDetail, DonorPostItem } from "../types/donorPostDetail.types";
@@ -136,17 +136,10 @@ export function DonorPostDetailView({ post }: { post: DonorPostDetail }) {
       </div>
 
       <div
-        className="fixed inset-x-0 bottom-0 flex items-center gap-3 border-t border-black/5 bg-surface px-6 pt-4"
+        className="fixed inset-x-0 bottom-0 border-t border-black/5 bg-surface px-6 pt-4"
         style={{ paddingBottom: "max(1.25rem, env(safe-area-inset-bottom))" }}
       >
-        <button
-          type="button"
-          aria-label="Laporkan"
-          className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-black/10 text-black/50"
-        >
-          <Flag size={20} />
-        </button>
-        <Link href={`/dashboard/donatur/donasi?postId=${post.post_id}`} className="flex-1">
+        <Link href={`/dashboard/donatur/donasi?postId=${post.post_id}`}>
           <PressButton variant="primary" className="w-full py-4 text-base">
             Donasi Sekarang
           </PressButton>

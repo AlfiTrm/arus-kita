@@ -31,7 +31,7 @@ export interface DashboardEvent {
   summary_text: string;
   can_scan_courier_qr: boolean;
   can_add_follow_up_request: boolean;
-  latest_orders: DashboardOrder[];
+  latest_orders: DashboardOrder[] | null;
 }
 
 export interface AdminDashboardData {

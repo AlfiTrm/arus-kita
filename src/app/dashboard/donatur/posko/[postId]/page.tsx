@@ -1,6 +1,7 @@
 "use client";
 
 import { use } from "react";
+import { DonorPostDetailSkeleton } from "@/features/donor-dashboard/components/DonorPostDetailSkeleton";
 import { DonorPostDetailView } from "@/features/donor-dashboard/components/DonorPostDetailView";
 import { useDonorPostDetail } from "@/features/donor-dashboard/hooks/useDonorPostDetail";
 
@@ -9,7 +10,7 @@ export default function DonorPostDetailPage({ params }: { params: Promise<{ post
   const { post, isLoading, error } = useDonorPostDetail(postId);
 
   if (isLoading) {
-    return <p className="px-6 pt-6 text-sm text-black/40">Memuat detail posko...</p>;
+    return <DonorPostDetailSkeleton />;
   }
 
   if (error || !post) {

@@ -6,7 +6,7 @@ const PROBLEMS = [
     title: "Dana tunai tak terlacak",
     description: (
       <>
-        Donasi tunai berpindah tangan tanpa jejak. Di PijarNusa,{" "}
+        Donasi tunai berpindah tangan tanpa jejak. Di Arus Kita,{" "}
         <strong className="font-semibold text-black">dana dikunci ke pesanan barang</strong> — tak pernah
         jadi tunai di tangan siapa pun.
       </>

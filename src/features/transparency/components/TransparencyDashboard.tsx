@@ -5,10 +5,15 @@ import { AllocationBreakdown } from "./AllocationBreakdown";
 import { LedgerTable } from "./LedgerTable";
 import { MonthlyChart } from "./MonthlyChart";
 import { SummaryCards } from "./SummaryCards";
+import { TransparencyDashboardSkeleton } from "./TransparencyDashboardSkeleton";
 import { TransparencyHeader } from "./TransparencyHeader";
 
 export function TransparencyDashboard() {
-  const { data, error } = useTransparencyData();
+  const { data, error, isLoading } = useTransparencyData();
+
+  if (isLoading) {
+    return <TransparencyDashboardSkeleton />;
+  }
 
   if (error) {
     return (
@@ -19,11 +24,7 @@ export function TransparencyDashboard() {
   }
 
   if (!data) {
-    return (
-      <div className="container py-12">
-        <p className="text-center text-sm text-black/40">Memuat data transparansi...</p>
-      </div>
-    );
+    return null;
   }
 
   return (

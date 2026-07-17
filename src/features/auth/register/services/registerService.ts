@@ -34,4 +34,17 @@ export const registerService = {
     });
     return res.data;
   },
+
+  setAdminPassword: async (
+    registrationId: string,
+    password: string,
+    confirmPassword: string,
+  ): Promise<SetPasswordData> => {
+    const res = await apiClient.post<SetPasswordResponse>("/auth/register/admin/password", {
+      registration_id: registrationId,
+      password,
+      confirm_password: confirmPassword,
+    });
+    return res.data;
+  },
 };

@@ -5,9 +5,10 @@ export default function PetaBencanaPage() {
   return (
     <div className="flex h-dvh flex-col">
       <LandingNavbar />
-      <div className="min-h-0 flex-1">
+      <main className="min-h-0 flex-1">
+        <h1 className="sr-only">Peta Bencana — Lokasi Posko Bantuan</h1>
         <CrisisMapLoader />
-      </div>
+      </main>
     </div>
   );
 }

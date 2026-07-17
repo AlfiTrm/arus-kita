@@ -18,14 +18,16 @@ export function MonthlyChart({ data }: { data: MonthlyDisbursement[] }) {
           <p className="text-sm">Belum ada data penyaluran bulanan.</p>
         </div>
       ) : (
-        <div className="mt-6 flex h-40 items-end gap-3">
+        <div className="mt-6 flex h-40 items-end justify-center gap-3">
           {data.map((item) => (
-            <div key={item.month} className="flex flex-1 flex-col items-center gap-2">
-              <div
-                className="w-full rounded-t-lg bg-main/30"
-                style={{ height: `${Math.max((item.total / max) * 100, 4)}%` }}
-                title={`Rp${(item.total / 1_000_000).toLocaleString("id-ID")} jt`}
-              />
+            <div key={item.month} className="flex h-full w-full max-w-16 flex-1 flex-col items-center gap-2">
+              <div className="flex w-full flex-1 items-end">
+                <div
+                  className="w-full rounded-t-lg bg-main/70"
+                  style={{ height: `${Math.max((item.total / max) * 100, 4)}%` }}
+                  title={`Rp${(item.total / 1_000_000).toLocaleString("id-ID")} jt`}
+                />
+              </div>
               <span className="text-xs text-black/50">{item.month}</span>
             </div>
           ))}

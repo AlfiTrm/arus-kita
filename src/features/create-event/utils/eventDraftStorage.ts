@@ -1,4 +1,4 @@
-const STORAGE_KEY = "pijarnusa_event_draft";
+const STORAGE_KEY = "aruskita_event_draft";
 
 export interface EventDraftPhoto {
   dataUrl: string;

@@ -7,6 +7,10 @@ import {
   type TransactionFilter,
 } from "@/features/donor-dashboard/components/TransactionFilterTabs";
 import { TransactionListItem } from "@/features/donor-dashboard/components/TransactionListItem";
+import {
+  TransactionListItemSkeleton,
+  TransactionStatsCardSkeleton,
+} from "@/features/donor-dashboard/components/TransactionListSkeleton";
 import { TransactionStatsCard } from "@/features/donor-dashboard/components/TransactionStatsCard";
 import { useDonorProfile } from "@/features/donor-dashboard/hooks/useDonorProfile";
 import { useDonorTransactions } from "@/features/donor-dashboard/hooks/useDonorTransactions";
@@ -25,20 +29,18 @@ export default function DonorTransparencyPage() {
         <p className="mt-0.5 text-xs text-black/50">Setiap rupiah tercatat di ledger — tidak bisa diubah</p>
       </div>
 
-      <TransactionStatsCard transactions={transactions} profile={profile} />
+      {isLoading ? <TransactionStatsCardSkeleton /> : <TransactionStatsCard transactions={transactions} profile={profile} />}
       <TransactionFilterTabs filter={filter} onFilterChange={setFilter} />
 
       <div className="mt-4 flex flex-col gap-3 px-6">
-        {isLoading && <p className="text-sm text-black/40">Memuat transaksi...</p>}
+        {isLoading && Array.from({ length: 3 }).map((_, i) => <TransactionListItemSkeleton key={i} />)}
         {error && <p className="text-sm text-error">{error}</p>}
         {!isLoading && filtered.length === 0 && (
           <p className="rounded-2xl border border-dashed border-black/10 px-4 py-6 text-center text-sm text-black/40">
             Belum ada transaksi di kategori ini.
           </p>
         )}
-        {filtered.map((tx) => (
-          <TransactionListItem key={tx.donation_id} tx={tx} />
-        ))}
+        {!isLoading && filtered.map((tx) => <TransactionListItem key={tx.donation_id} tx={tx} />)}
       </div>
     </div>
   );

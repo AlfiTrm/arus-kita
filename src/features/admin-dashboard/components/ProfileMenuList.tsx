@@ -1,10 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Bell, ChevronRight, FileText, LogOut, Settings, UserCircle } from "lucide-react";
-import { clearSession } from "@/shared/utils/authSession";
+import { useLogout } from "@/shared/hooks/useLogout";
 
 const MENU_ITEMS = [
   { href: "/dashboard/admin/profil/verifikasi", icon: UserCircle, label: "Data diri & verifikasi" },
@@ -12,13 +11,8 @@ const MENU_ITEMS = [
 ];
 
 export function ProfileMenuList() {
-  const router = useRouter();
   const [notifEnabled, setNotifEnabled] = useState(true);
-
-  function handleLogout() {
-    clearSession();
-    router.push("/login");
-  }
+  const { logout, isLoggingOut } = useLogout();
 
   return (
     <div className="mt-5 flex flex-col gap-3 px-6">
@@ -71,16 +65,17 @@ export function ProfileMenuList() {
 
       <button
         type="button"
-        onClick={handleLogout}
-        className="flex items-center gap-3 rounded-2xl border border-error/10 bg-error/5 px-4 py-3.5 text-left"
+        onClick={logout}
+        disabled={isLoggingOut}
+        className="flex items-center gap-3 rounded-2xl border border-error/10 bg-error/5 px-4 py-3.5 text-left disabled:opacity-60"
       >
         <span className="flex h-9 w-9 items-center justify-center rounded-full bg-error/10 text-error">
           <LogOut size={16} />
         </span>
-        <span className="text-sm font-semibold text-error">Keluar</span>
+        <span className="text-sm font-semibold text-error">{isLoggingOut ? "Keluar..." : "Keluar"}</span>
       </button>
 
-      <p className="mt-3 text-center text-xs text-black/30">PijarNusa PWA v1.0</p>
+      <p className="mt-3 text-center text-xs text-black/30">Arus Kita PWA v1.0</p>
     </div>
   );
 }

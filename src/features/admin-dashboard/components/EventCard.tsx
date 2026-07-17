@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Plus, QrCode } from "lucide-react";
 import PressButton from "@/shared/components/PressButton";
 import type { DashboardEvent } from "../types/adminDashboard.types";
@@ -14,8 +15,14 @@ const BADGE_VARIANT_CLASS: Record<string, string> = {
 };
 
 export function EventCard({ event }: { event: DashboardEvent }) {
+  const router = useRouter();
   const [imgError, setImgError] = useState(false);
   const isActive = event.status === "active";
+
+  function goToScan() {
+    const params = new URLSearchParams({ title: event.title, code: event.event_code });
+    router.push(`/dashboard/admin/event/${event.post_id}/scan?${params.toString()}`);
+  }
 
   return (
     <div className="mx-6 mt-4 overflow-hidden rounded-2xl border border-black/5 bg-white">
@@ -74,7 +81,7 @@ export function EventCard({ event }: { event: DashboardEvent }) {
         </div>
       </div>
 
-      {event.latest_orders.length > 0 && (
+      {event.latest_orders && event.latest_orders.length > 0 && (
         <div className="mt-3 flex flex-col gap-2 px-4">
           {event.latest_orders.map((order) => (
             <div
@@ -103,7 +110,7 @@ export function EventCard({ event }: { event: DashboardEvent }) {
       {(event.can_scan_courier_qr || event.can_add_follow_up_request) && (
         <div className="mt-3 flex flex-col gap-2 px-4 pb-4">
           {event.can_scan_courier_qr && (
-            <PressButton variant="primary" className="flex w-full items-center justify-center gap-2">
+            <PressButton variant="primary" className="flex w-full items-center justify-center gap-2" onClick={goToScan}>
               <QrCode size={16} /> Scan QR Kurir — Terima Barang
             </PressButton>
           )}

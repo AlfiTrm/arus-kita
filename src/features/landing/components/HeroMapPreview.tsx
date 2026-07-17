@@ -1,58 +1,63 @@
-import { Check } from "lucide-react";
+"use client";
 
-const MARKERS = [
-  { top: "22%", left: "18%", color: "bg-error", label: "4%" },
-  { top: "38%", left: "62%", color: "bg-warning", label: "64%" },
-  { top: "20%", left: "88%", color: "bg-success", label: null },
-];
+import { Camera } from "lucide-react";
+import "leaflet/dist/leaflet.css";
+import { MapContainer, TileLayer } from "react-leaflet";
+import { PoskoMarker } from "@/features/crisis-map/components/PoskoMarker";
+import { usePoskoList } from "@/features/crisis-map/hooks/usePoskoList";
+import { useDistributionList } from "@/features/distributions/hooks/useDistributionList";
+
+const INDONESIA_CENTER: [number, number] = [-2.5, 118];
+
+function truncateHash(hash: string): string {
+  return hash.length > 12 ? `${hash.slice(0, 6)}...${hash.slice(-4)}` : hash;
+}
+
+function formatTime(iso: string): string {
+  return new Date(iso).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
+}
 
 export function HeroMapPreview() {
+  const { posko } = usePoskoList();
+  const { distributions } = useDistributionList();
+  const latest = distributions[0];
+
   return (
-    <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-secondary/40">
-      <div
-        className="absolute inset-0 opacity-40"
-        style={{
-          backgroundImage:
-            "linear-gradient(color-mix(in srgb, var(--color-main) 15%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--color-main) 15%, transparent) 1px, transparent 1px)",
-          backgroundSize: "28px 28px",
-        }}
-      />
+    <div className="relative isolate aspect-4/3 w-full overflow-hidden rounded-2xl border border-black/5">
+      <MapContainer
+        center={INDONESIA_CENTER}
+        zoom={5}
+        dragging={false}
+        zoomControl={false}
+        scrollWheelZoom={false}
+        doubleClickZoom={false}
+        touchZoom={false}
+        attributionControl={false}
+        className="h-full w-full"
+      >
+        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+        {posko.map((p) => (
+          <PoskoMarker key={p.post_id} posko={p} />
+        ))}
+      </MapContainer>
 
-      <svg className="absolute inset-0 h-full w-full" preserveAspectRatio="none">
-        <line
-          x1="18%"
-          y1="22%"
-          x2="88%"
-          y2="20%"
-          stroke="white"
-          strokeWidth={4}
-          strokeDasharray="1 14"
-          strokeLinecap="round"
-        />
-      </svg>
-
-      {MARKERS.map((marker, i) => (
-        <span
-          key={i}
-          className={`absolute flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-white text-[10px] font-bold text-white shadow ${marker.color}`}
-          style={{ top: marker.top, left: marker.left }}
-        >
-          {marker.label ?? <Check size={14} />}
-        </span>
-      ))}
-
-      <div className="absolute bottom-4 left-4 right-4 flex items-center gap-3 rounded-xl bg-surface px-4 py-3 shadow-lg">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-secondary text-lg">
-          📷
-        </span>
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-semibold text-black">Bukti foto tiba di Posko Cianjur</p>
-          <p className="truncate text-xs text-black/50">GPS valid · 14:32 WIB · hash 0xf40a...7d21</p>
+      {latest && (
+        <div className="pointer-events-none absolute inset-x-4 bottom-4 flex items-center gap-3 rounded-xl bg-surface px-4 py-3 shadow-lg">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-secondary text-main">
+            <Camera size={18} />
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-semibold text-black">{latest.title}</p>
+            <p className="truncate text-xs text-black/50">
+              {latest.gps_valid ? "GPS valid" : "GPS tidak valid"} · {formatTime(latest.captured_at)} WIB · hash{" "}
+              {truncateHash(latest.audit_hash)}
+            </p>
+          </div>
+          <span className="shrink-0 rounded-full bg-success/10 px-2.5 py-1 text-[11px] font-semibold text-success">
+            ✓ SAMPAI
+          </span>
         </div>
-        <span className="shrink-0 rounded-full bg-success/10 px-2.5 py-1 text-[11px] font-semibold text-success">
-          ✓ SAMPAI
-        </span>
-      </div>
+      )}
     </div>
   );
 }
