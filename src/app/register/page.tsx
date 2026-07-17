@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CompleteProfileStep } from "@/features/auth/register/components/CompleteProfileStep";
+import { DonaturProfileStep, type DonaturProfile } from "@/features/auth/register/components/DonaturProfileStep";
 import { EmailStep } from "@/features/auth/register/components/EmailStep";
 import { OtpStep } from "@/features/auth/register/components/OtpStep";
 import { PasswordStep } from "@/features/auth/register/components/PasswordStep";
@@ -10,11 +11,18 @@ import { RegisterStepHeader } from "@/features/auth/register/components/Register
 import { RoleSelectStep } from "@/features/auth/register/components/RoleSelectStep";
 import { SuccessStep } from "@/features/auth/register/components/SuccessStep";
 import { adminRegisterService } from "@/features/auth/register/services/adminRegisterService";
+import { donorRegisterService } from "@/features/auth/register/services/donorRegisterService";
+import { registerService } from "@/features/auth/register/services/registerService";
 import { ROLE_LABELS, type RegisterRole } from "@/features/auth/register/types/register.types";
 import { saveSession } from "@/shared/utils/authSession";
 
 const TOTAL_STEPS = 6;
 const DEFAULT_OTP_SECONDS = 300;
+
+const ROLE_BACKEND_VALUE: Partial<Record<RegisterRole, string>> = {
+  admin_posko: "admin",
+  donatur: "donor",
+};
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -35,8 +43,9 @@ export default function RegisterPage() {
   }
 
   async function handleEmailSubmit(value: string) {
-    if (role === "admin_posko") {
-      const result = await adminRegisterService.requestOtp(value);
+    const backendRole = ROLE_BACKEND_VALUE[role];
+    if (backendRole !== undefined) {
+      const result = await registerService.requestOtp(backendRole, value);
       setRegistrationId(result.registration_id);
       setOtpExpiresInSeconds(result.otp_expires_in_seconds);
     }
@@ -45,8 +54,9 @@ export default function RegisterPage() {
   }
 
   async function handleOtpResend(): Promise<number> {
-    if (role === "admin_posko") {
-      const result = await adminRegisterService.requestOtp(email);
+    const backendRole = ROLE_BACKEND_VALUE[role];
+    if (backendRole !== undefined) {
+      const result = await registerService.requestOtp(backendRole, email);
       setRegistrationId(result.registration_id);
       return result.otp_expires_in_seconds;
     }
@@ -54,15 +64,15 @@ export default function RegisterPage() {
   }
 
   async function handleOtpSubmit(code: string) {
-    if (role === "admin_posko") {
-      await adminRegisterService.verifyOtp(registrationId, code);
+    if (ROLE_BACKEND_VALUE[role] !== undefined) {
+      await registerService.verifyOtp(registrationId, code);
     }
     setStep(4);
   }
 
   async function handlePasswordSubmit(password: string) {
-    if (role === "admin_posko") {
-      await adminRegisterService.setPassword(registrationId, password, password);
+    if (ROLE_BACKEND_VALUE[role] !== undefined) {
+      await registerService.setPassword(registrationId, password, password);
     }
     setStep(5);
   }
@@ -77,6 +87,19 @@ export default function RegisterPage() {
       );
       saveSession(result.token, result.user);
     }
+    setStep(6);
+  }
+
+  async function handleDonaturProfileSubmit(profile: DonaturProfile) {
+    const donationPreferences = [...profile.disasterPreferences, ...(profile.regionPreference ? [profile.regionPreference] : [])];
+    const result = await donorRegisterService.completeProfile(
+      registrationId,
+      profile.fullName,
+      `+62${profile.phone}`,
+      donationPreferences,
+      true,
+    );
+    saveSession(result.token, result.user);
     setStep(6);
   }
 
@@ -109,13 +132,17 @@ export default function RegisterPage() {
       {step === 5 &&
         (role === "admin_posko" ? (
           <CompleteProfileStep onNext={handleProfileSubmit} />
+        ) : role === "donatur" ? (
+          <DonaturProfileStep onNext={handleDonaturProfileSubmit} />
         ) : (
           <div className="px-6 pt-2 text-sm text-black/50">
             Langkah lanjutan (khusus {ROLE_LABELS[role]}) belum dibuat.
           </div>
         ))}
 
-      {step === 6 && <SuccessStep onDone={() => router.push("/dashboard/admin")} />}
+      {step === 6 && (
+        <SuccessStep onDone={() => router.push(role === "admin_posko" ? "/dashboard/admin" : "/dashboard/donatur")} />
+      )}
     </div>
   );
 }

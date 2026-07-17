@@ -1,18 +1,20 @@
 import { apiClient } from "@/shared/services/apiClient";
 import type { CompleteProfileData, CompleteProfileResponse } from "../types/adminRegister.types";
 
-export const adminRegisterService = {
+export const donorRegisterService = {
   completeProfile: async (
     registrationId: string,
     fullName: string,
-    nik: string,
-    affiliation: string,
+    phoneNumber: string,
+    donationPreferences: string[],
+    consentAccepted: boolean,
   ): Promise<CompleteProfileData> => {
-    const res = await apiClient.post<CompleteProfileResponse>("/auth/register/admin/profile", {
+    const res = await apiClient.post<CompleteProfileResponse>("/auth/register/donor/profile", {
       registration_id: registrationId,
       full_name: fullName,
-      nik,
-      affiliation,
+      phone_number: phoneNumber,
+      donation_preferences: donationPreferences,
+      consent_accepted: consentAccepted,
     });
     return res.data;
   },

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useStandaloneMode } from "./useStandaloneMode";
 
-interface BeforeInstallPromptEvent extends Event {
+export interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }

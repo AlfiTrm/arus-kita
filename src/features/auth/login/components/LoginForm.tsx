@@ -2,18 +2,44 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { MapPin, ShieldCheck } from "lucide-react";
 import PressButton from "@/shared/components/PressButton";
+import { setToken } from "@/shared/utils/authSession";
+import { decodeJwtPayload } from "@/shared/utils/jwt";
 import { useLogin } from "../hooks/useLogin";
+import type { LoginJwtPayload } from "../types/login.types";
+
+const ROLE_REDIRECT: Record<string, string> = {
+  admin: "/dashboard/admin",
+  donor: "/dashboard/donatur",
+};
 
 export function LoginForm() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { login, isLoading, error } = useLogin();
+  const [roleError, setRoleError] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    await login({ email, password });
+    setRoleError(null);
+    try {
+      const result = await login({ email, password });
+      setToken(result.token);
+
+      const claims = decodeJwtPayload<LoginJwtPayload>(result.token);
+      const redirectPath = claims ? ROLE_REDIRECT[claims.role_name] : undefined;
+
+      if (redirectPath) {
+        router.push(redirectPath);
+      } else {
+        setRoleError("Peran akun ini belum didukung di aplikasi.");
+      }
+    } catch {
+      // error state already handled by useLogin
+    }
   }
 
   return (
@@ -57,7 +83,7 @@ export function LoginForm() {
             {isLoading ? "Memproses..." : "Masuk"}
           </PressButton>
 
-          {error && <p className="text-center text-sm text-error">{error}</p>}
+          {(error || roleError) && <p className="text-center text-sm text-error">{error ?? roleError}</p>}
         </form>
 
         <div className="mt-6 flex items-start gap-2 rounded-2xl bg-secondary px-4 py-3 text-xs text-black/70">

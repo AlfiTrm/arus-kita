@@ -1,23 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Poppins } from "next/font/google";
-import Script from "next/script";
+import { PwaInstallCapture } from "@/shared/components/PwaInstallCapture";
 import { ServiceWorkerRegister } from "@/shared/components/ServiceWorkerRegister";
 import "@/shared/styles/globals.css";
-
-const PWA_INSTALL_CAPTURE_SCRIPT = `
-  window.__pwaDeferredPrompt = null;
-  window.__pwaInstalled = false;
-  window.addEventListener("beforeinstallprompt", function (e) {
-    e.preventDefault();
-    window.__pwaDeferredPrompt = e;
-    window.dispatchEvent(new Event("pwa-installable"));
-  });
-  window.addEventListener("appinstalled", function () {
-    window.__pwaInstalled = true;
-    window.__pwaDeferredPrompt = null;
-    window.dispatchEvent(new Event("pwa-installed"));
-  });
-`;
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -44,9 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${poppins.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
-        <Script id="pwa-install-capture" strategy="beforeInteractive">
-          {PWA_INSTALL_CAPTURE_SCRIPT}
-        </Script>
+        <PwaInstallCapture />
         <ServiceWorkerRegister />
         {children}
       </body>

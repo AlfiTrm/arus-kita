@@ -16,6 +16,10 @@ export function saveSession(token: string, user: StoredUser) {
   localStorage.setItem(USER_KEY, JSON.stringify(user));
 }
 
+export function setToken(token: string) {
+  localStorage.setItem(TOKEN_KEY, token);
+}
+
 export function getToken(): string | null {
   return localStorage.getItem(TOKEN_KEY);
 }

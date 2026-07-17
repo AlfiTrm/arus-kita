@@ -3,7 +3,19 @@ export interface LoginPayload {
   password: string;
 }
 
-export interface LoginResponse {
+export interface LoginData {
   token: string;
-  userId: string;
+}
+
+export interface LoginResponse {
+  status: { code: number; isSuccess: boolean };
+  message: string;
+  data: LoginData;
+}
+
+export interface LoginJwtPayload {
+  user_id: string;
+  is_admin: boolean;
+  role_name: string;
+  exp: number;
 }
