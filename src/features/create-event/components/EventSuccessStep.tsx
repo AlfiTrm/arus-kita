@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { MapPin, Megaphone, Share2 } from "lucide-react";
+import { Check, MapPin, Megaphone, Share2 } from "lucide-react";
 import PressButton from "@/shared/components/PressButton";
 import { formatRupiah } from "@/shared/utils/formatCurrency";
 
@@ -44,8 +44,8 @@ export function EventSuccessStep({
   }
 
   return (
-    <div className="flex flex-1 flex-col overflow-y-auto bg-main">
-      <div className="flex flex-col items-center justify-center px-6 py-10 text-center text-white">
+    <div className="flex h-full flex-col bg-main">
+      <div className="flex h-3/5 shrink-0 flex-col items-center justify-center px-6 text-center text-white">
         <span className="flex h-20 w-20 items-center justify-center rounded-full bg-white/15">
           <span className="flex h-14 w-14 items-center justify-center rounded-full bg-secondary text-error">
             <MapPin size={26} />
@@ -59,7 +59,7 @@ export function EventSuccessStep({
       </div>
 
       <div
-        className="rounded-t-3xl bg-surface px-6 pt-6"
+        className="h-2/5 overflow-y-auto rounded-t-3xl bg-surface px-6 pt-6"
         style={{ paddingBottom: "max(1.5rem, env(safe-area-inset-bottom))" }}
       >
         <div className="flex flex-col gap-3 text-sm">
@@ -76,10 +76,11 @@ export function EventSuccessStep({
           <div className="flex items-center justify-between">
             <span className="text-black/50">Status verifikasi</span>
             <span
-              className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
+              className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${
                 isAdminVerified ? "bg-success/10 text-success" : "bg-warning/10 text-warning"
               }`}
             >
+              {isAdminVerified && <Check size={12} strokeWidth={3} />}
               {verificationText}
             </span>
           </div>
@@ -89,7 +90,7 @@ export function EventSuccessStep({
           </div>
         </div>
 
-        <div className="mt-4 flex items-start gap-2 rounded-xl bg-secondary/50 px-4 py-3 text-xs leading-5 text-black/70">
+        <div className="mt-4 flex items-start gap-2 rounded-xl bg-secondary px-4 py-3 text-xs leading-5 text-black/70">
           <Megaphone size={16} className="mt-0.5 shrink-0 text-main" />
           Order otomatis dibroadcast ke toko mitra begitu tiap item terdanai penuh — Anda tinggal menerima barang.
         </div>

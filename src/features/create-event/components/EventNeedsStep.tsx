@@ -33,6 +33,11 @@ export function EventNeedsStep({
     onQuantitiesChange({ ...quantities, [id]: next });
   }
 
+  function setQuantity(id: string, value: string) {
+    const parsed = Math.max(0, Math.floor(Number(value.replace(/[^0-9]/g, "")) || 0));
+    onQuantitiesChange({ ...quantities, [id]: parsed });
+  }
+
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-surface">
       <div className="flex-1 overflow-y-auto px-6 pb-40 pt-4">
@@ -72,7 +77,15 @@ export function EventNeedsStep({
                   >
                     <Minus size={14} />
                   </button>
-                  <span className="w-8 text-center text-sm font-bold text-black">{quantity}</span>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    value={quantity}
+                    onChange={(e) => setQuantity(item.id, e.target.value)}
+                    onFocus={(e) => e.target.select()}
+                    aria-label={`Jumlah ${item.name}`}
+                    className="w-10 rounded-lg border border-transparent text-center text-sm font-bold text-black outline-none focus:border-main"
+                  />
                   <button
                     type="button"
                     onClick={() => updateQuantity(item.id, 1)}
