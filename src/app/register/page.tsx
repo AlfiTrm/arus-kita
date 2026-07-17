@@ -135,7 +135,7 @@ export default function RegisterPage() {
       owner_name: profile.ownerName,
       nib: profile.nib,
       npwp: profile.npwp,
-      ktp_image_url: profile.ktpImageUrl,
+      ktp_file: profile.ktpFile,
       bank_name: profile.bankName,
       bank_account_no: profile.bankAccountNo,
       bank_account_name: profile.bankAccountName,

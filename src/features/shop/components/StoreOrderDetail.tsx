@@ -1,54 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { Check, Phone, TriangleAlert } from "lucide-react";
-import { useStoreOrderDetail } from "../hooks/useStoreOrderDetail";
-import { shopService } from "../services/shopService";
+import { Check, Phone, TriangleAlert, Landmark } from "lucide-react";
+import { useStoreOrderReady } from "../hooks/useStoreOrderReady";
 
 export function StoreOrderDetail({ orderId }: { orderId: string }) {
-  const router = useRouter();
-  const { data, isLoading, error } = useStoreOrderDetail(orderId);
-  const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  useEffect(() => {
-    if (data && data.items) {
-      const initialChecked: Record<string, boolean> = {};
-      data.items.forEach((item) => {
-        initialChecked[item.item_id] = false;
-      });
-      setCheckedItems(initialChecked);
-    }
-  }, [data]);
+  const {
+    data,
+    isLoading,
+    error,
+    checkedItems,
+    isSubmitting,
+    handleToggleItem,
+    checkedCount,
+    totalItems,
+    allChecked,
+    handleReady
+  } = useStoreOrderReady(orderId);
 
   if (isLoading) return <div className="p-6 text-center text-sm font-medium">Memuat detail order...</div>;
   if (error || !data) return <div className="p-6 text-center text-sm font-medium text-error">Gagal memuat detail order.</div>;
-
-  const handleToggleItem = (itemId: string) => {
-    setCheckedItems((prev) => ({
-      ...prev,
-      [itemId]: !prev[itemId],
-    }));
-  };
-
-  const checkedCount = Object.values(checkedItems).filter(Boolean).length;
-  const totalItems = data.items.length;
-  const allChecked = totalItems > 0 && checkedCount === totalItems;
-
-  const handleReady = async () => {
-    setIsSubmitting(true);
-    try {
-      const res = await shopService.markOrderReady(orderId);
-      sessionStorage.setItem("store_order_qr", JSON.stringify(res.data));
-      router.push(`/dashboard/toko/orders/${orderId}/qr`);
-    } catch (err) {
-      console.error(err);
-      alert("Gagal menyiapkan barang.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   return (
     <div className="min-h-dvh bg-surface pb-32">
@@ -141,7 +111,10 @@ export function StoreOrderDetail({ orderId }: { orderId: string }) {
             </div>
             <div className="text-right">
               <p className="text-[11px] text-black/50">Ke rekening</p>
-              <p className="mt-0.5 text-sm font-bold text-black">BCA &bull;&bull;&bull;8341</p>
+              <div className="mt-0.5 flex items-center justify-end gap-1 text-sm font-bold text-black">
+                <Landmark className="h-4 w-4 text-black/50" />
+                <span>&bull;&bull;&bull;8341</span>
+              </div>
             </div>
           </div>
         </div>
