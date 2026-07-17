@@ -1,6 +1,9 @@
 import { apiClient } from "@/shared/services/apiClient";
-import type { LoginPayload, LoginResponse } from "../types/login.types";
+import type { LoginData, LoginPayload, LoginResponse } from "../types/login.types";
 
 export const loginService = {
-  login: (payload: LoginPayload) => apiClient.post<LoginResponse>("/auth/login", payload),
+  login: async (payload: LoginPayload): Promise<LoginData> => {
+    const res = await apiClient.post<LoginResponse>("/auth/login", payload);
+    return res.data;
+  },
 };

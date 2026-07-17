@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+@theme {
+  --color-main: #028090;
+  --color-secondary: #e4fde1;
+  --color-surface: #feffff;
+  --color-black: #262626;
+
+  --color-error: #dc2626;
+  --color-success: #16a34a;
+  --color-warning: #f59e0b;
+  --color-caution: #eab308;
+
+  --color-main-shadow: color-mix(in srgb, var(--color-main) 100%, black 30%);
+  --color-secondary-shadow: color-mix(in srgb, var(--color-secondary) 100%, black 20%);
+  --color-success-shadow: color-mix(in srgb, var(--color-success) 100%, black 25%);
+  --color-warning-shadow: color-mix(in srgb, var(--color-warning) 100%, black 25%);
+  --color-error-shadow: color-mix(in srgb, var(--color-error) 100%, black 25%);
+  --color-outline-shadow: color-mix(in srgb, var(--color-black) 20%, transparent);
+  --color-outline-inverse-shadow: color-mix(in srgb, white 25%, transparent);
+
+  --font-sans: var(--font-poppins), sans-serif;
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+button,
+a,
+[role="button"] {
+  touch-action: manipulation;
+}
+
+@utility container {
+  margin-inline: auto;
+  max-width: 1440px;
+  padding-inline: 16px;
+
+  @media (width >= theme(--breakpoint-md)) {
+    padding-inline: 40px;
+  }
+
+  @media (width >= theme(--breakpoint-lg)) {
+    padding-inline: 104px;
+  }
+}
