@@ -19,7 +19,8 @@ export function StoreOrderView() {
     reputationScore,
     currentOrder,
     history,
-    handleAccept
+    handleAccept,
+    handleContinueQr
   } = useStoreOrderView();
 
   if (profileLoading || ordersLoading) return <StoreOrderViewSkeleton />;
@@ -44,7 +45,7 @@ export function StoreOrderView() {
       {currentOrder ? (
         <div className="mt-2 px-6">
           <div className="relative rounded-2xl border-2 border-main p-4">
-            <div className="flex items-center gap-1.5 rounded-full bg-error/10 px-2 py-0.5">
+            <div className="flex items-center gap-1.5 rounded-full bg-error/10 px-2 py-0.5 w-max">
               <div className="h-1.5 w-1.5 rounded-full bg-error" />
               <span className="text-[10px] font-bold tracking-wide text-error">ORDER BARU &mdash; REBUTAN</span>
             </div>
@@ -82,7 +83,7 @@ export function StoreOrderView() {
                 variant="primary" 
                 className="flex-1 py-3 text-sm font-bold"
               >
-                {isAccepting ? "Menyetujui..." : "Setujui & Siapkan"}
+                {isAccepting ? "Memproses..." : (currentOrder.order_status === "ready_for_pickup" || currentOrder.order_status === "accepted" ? "Lanjutkan" : "Setujui & Siapkan")}
               </PressButton>
             </div>
           </div>
@@ -111,10 +112,22 @@ export function StoreOrderView() {
                     </h4>
                     <p className="mt-1 text-xs text-black/50">{item.request_title}</p>
                   </div>
-                  <div className="rounded-full bg-success/10 px-2 py-0.5 text-[10px] font-bold text-success">
-                    &check; {formatRupiah(item.total_amount)}
+                  <div className="rounded-full bg-success/10 px-2 py-0.5 text-[10px] font-bold text-success capitalize">
+                    {item.order_status}
                   </div>
                 </div>
+                {item.order_status === "ready_for_pickup" && (
+                  <div className="mt-3 border-t border-black/5 pt-3">
+                    <PressButton
+                      onClick={() => handleContinueQr(item.order_id)}
+                      disabled={isAccepting}
+                      variant="primary"
+                      className="w-full py-2 text-xs font-bold"
+                    >
+                      Lanjutkan
+                    </PressButton>
+                  </div>
+                )}
               </div>
             ))
           ) : (
