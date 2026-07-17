@@ -180,7 +180,7 @@ export function TokoProfileStep({ onNext }: { onNext: (profile: TokoProfile) => 
           <div className="flex-1">
             <p className="text-xs font-bold text-black">Lokasi toko (GPS)</p>
             <p className="mt-1 text-[11px] leading-relaxed text-black/50">
-              {latitude.toFixed(6)}, {longitude.toFixed(6)}
+              {latitude !== 0 || longitude !== 0 ? `${latitude.toFixed(6)}, ${longitude.toFixed(6)}` : "—"}
             </p>
             {geoError && <p className="mt-1 text-[11px] text-error">{geoError}</p>}
           </div>

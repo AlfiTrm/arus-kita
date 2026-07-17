@@ -173,10 +173,10 @@ export default function RegisterPage() {
         <SuccessStep
           onDone={() =>
             router.push(
-              role === "admin_posko" 
-                ? "/dashboard/admin" 
-                : role === "toko_mitra" 
-                  ? "/dashboard/toko" 
+              role === "toko_mitra"
+                ? "/login"
+                : role === "admin_posko"
+                  ? "/dashboard/admin"
                   : "/dashboard/donatur"
             )
           }
