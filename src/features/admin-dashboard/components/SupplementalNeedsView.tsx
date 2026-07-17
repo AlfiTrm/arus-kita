@@ -22,7 +22,6 @@ export function SupplementalNeedsView({
   onSubmitted: (result: SupplementalNeedData) => void;
 }) {
   const [reason, setReason] = useState("");
-  const [reservedAmountApplied, setReservedAmountApplied] = useState(0);
   const [search, setSearch] = useState("");
   const [quantities, setQuantities] = useState<Record<string, number>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -33,7 +32,6 @@ export function SupplementalNeedsView({
     (sum, item) => sum + item.pricePerUnit * (quantities[item.id] ?? 0),
     0,
   );
-  const targetPenggalangan = Math.max(0, totalKebutuhan - reservedAmountApplied);
   const selectedCount = EVENT_ITEM_CATALOG.filter((item) => (quantities[item.id] ?? 0) > 0).length;
   const canSubmit = reason.trim().length > 0 && selectedCount > 0 && !isSubmitting;
 
@@ -48,7 +46,7 @@ export function SupplementalNeedsView({
     try {
       const result = await adminSupplementalNeedsService.create(orderId, {
         reason,
-        reservedAmountApplied,
+        reservedAmountApplied: 0,
         items: EVENT_ITEM_CATALOG.filter((item) => (quantities[item.id] ?? 0) > 0).map((item) => ({
           name: item.name,
           description: item.unit,
@@ -95,21 +93,6 @@ export function SupplementalNeedsView({
             required
             className="mt-1 w-full resize-none rounded-lg border border-black/10 px-4 py-3 text-sm outline-none focus:border-main focus:ring-2 focus:ring-main/20"
           />
-        </label>
-
-        <label className="mt-4 flex flex-col gap-1.5 text-sm font-medium text-black">
-          Dana cadangan dipakai
-          <span className="text-xs font-normal text-black/40">Dipakai lebih dulu — sisa kebutuhan masuk penggalangan baru</span>
-          <div className="mt-1 flex items-center gap-2 rounded-lg border border-black/10 px-4 py-3">
-            <span className="text-sm text-black/40">Rp</span>
-            <input
-              type="number"
-              min={0}
-              value={reservedAmountApplied}
-              onChange={(e) => setReservedAmountApplied(Math.max(0, Number(e.target.value)))}
-              className="w-full bg-transparent text-sm outline-none"
-            />
-          </div>
         </label>
 
         <div className="mt-5 flex items-center gap-2 rounded-full border border-black/10 px-4 py-2.5">
@@ -164,19 +147,9 @@ export function SupplementalNeedsView({
         className="shrink-0 border-t border-black/5 bg-surface px-6 pt-4"
         style={{ paddingBottom: "max(1.5rem, env(safe-area-inset-bottom))" }}
       >
-        <div className="flex flex-col gap-1 text-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-black/50">Total kebutuhan susulan</span>
-            <span className="font-semibold text-black">{formatRupiah(totalKebutuhan)}</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-black/50">Dipenuhi dana cadangan</span>
-            <span className="font-semibold text-success">−{formatRupiah(reservedAmountApplied)}</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="font-medium text-black">Target penggalangan baru</span>
-            <span className="text-lg font-bold text-main">{formatRupiah(targetPenggalangan)}</span>
-          </div>
+        <div className="flex items-center justify-between text-sm">
+          <span className="font-medium text-black">Total kebutuhan susulan</span>
+          <span className="text-lg font-bold text-main">{formatRupiah(totalKebutuhan)}</span>
         </div>
         <PressButton variant="primary" className="mt-3 w-full" disabled={!canSubmit} onClick={handleSubmit}>
           {isSubmitting ? "Menerbitkan..." : "Tayangkan Kebutuhan Susulan"}

@@ -111,7 +111,7 @@ export function OtpStep({
             onChange={(e) => handleChange(i, e.target.value)}
             onKeyDown={(e) => handleKeyDown(i, e)}
             onPaste={handlePaste}
-            className="h-12 w-12 rounded-lg border border-black/10 text-center text-lg font-semibold text-black outline-none focus:border-main focus:ring-2 focus:ring-main/20 disabled:opacity-50"
+            className="h-14 w-full min-w-0 flex-1 rounded-lg border border-black/10 text-center text-lg font-semibold text-black outline-none focus:border-main focus:ring-2 focus:ring-main/20 disabled:opacity-50"
           />
         ))}
       </div>

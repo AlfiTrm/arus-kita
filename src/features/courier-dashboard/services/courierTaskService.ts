@@ -17,7 +17,7 @@ export const courierTaskService = {
     const query = new URLSearchParams({
       lat: String(params.lat),
       lng: String(params.lng),
-      status: params.status ?? "mine",
+      ...(params.status ? { status: params.status } : {}),
     });
     const res = await apiClient.get<CourierTaskListResponse>(`/courier/tasks?${query.toString()}`);
     return res.data;

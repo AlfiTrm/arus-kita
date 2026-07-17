@@ -31,4 +31,7 @@ export const shopService = {
   async markOrderReady(orderId: string, signal?: AbortSignal): Promise<StoreOrderReadyResponse> {
     return apiClient.post<StoreOrderReadyResponse>(`/store/orders/${orderId}/ready`, undefined, { signal });
   },
+  async refreshHandoffToken(orderId: string, signal?: AbortSignal): Promise<StoreOrderReadyResponse> {
+    return apiClient.post<StoreOrderReadyResponse>(`/store/orders/${orderId}/handoff-token`, undefined, { signal });
+  },
 };

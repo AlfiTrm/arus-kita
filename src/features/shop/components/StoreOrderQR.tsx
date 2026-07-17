@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, MapPin } from "lucide-react";
+import { Check, ChevronLeft, MapPin, SignalHigh } from "lucide-react";
 import QRCode from "qrcode";
+import { shopService } from "../services/shopService";
 import type { StoreOrderReadyData } from "../types/shop.types";
 
 export function StoreOrderQR({ orderId }: { orderId: string }) {
@@ -11,6 +12,8 @@ export function StoreOrderQR({ orderId }: { orderId: string }) {
   const [qrData, setQrData] = useState<StoreOrderReadyData | null>(null);
   const [qrImageUrl, setQrImageUrl] = useState<string>("");
   const [timeLeft, setTimeLeft] = useState<number>(0);
+  const [courierName, setCourierName] = useState<string | null>(null);
+  const [isPickedUp, setIsPickedUp] = useState(false);
 
   useEffect(() => {
     const raw = sessionStorage.getItem("store_order_qr");
@@ -20,6 +23,7 @@ export function StoreOrderQR({ orderId }: { orderId: string }) {
     }
     try {
       const parsed = JSON.parse(raw) as StoreOrderReadyData;
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- reading from sessionStorage, unavailable during SSR
       setQrData(parsed);
       setTimeLeft(parsed.refresh_in_seconds || 18);
     } catch {
@@ -50,7 +54,71 @@ export function StoreOrderQR({ orderId }: { orderId: string }) {
     return () => clearInterval(interval);
   }, [timeLeft]);
 
+  useEffect(() => {
+    if (timeLeft > 0 || isPickedUp) return;
+    let cancelled = false;
+
+    shopService
+      .markOrderReady(orderId)
+      .then((res) => {
+        if (cancelled) return;
+        setQrData(res.data);
+        sessionStorage.setItem("store_order_qr", JSON.stringify(res.data));
+        setTimeLeft(res.data.refresh_in_seconds || 18);
+      })
+      .catch(() => {});
+
+    return () => {
+      cancelled = true;
+    };
+  }, [timeLeft, isPickedUp, orderId]);
+
+  useEffect(() => {
+    if (isPickedUp) return;
+    let cancelled = false;
+
+    const poll = setInterval(async () => {
+      try {
+        const res = await shopService.getOrderDetail(orderId);
+        if (cancelled) return;
+        setCourierName((prev) => prev ?? res.data.courier_name);
+        if (res.data.picked_up_at) {
+          setIsPickedUp(true);
+          sessionStorage.removeItem("store_order_qr");
+        }
+      } catch {
+        // transient poll error, keep trying
+      }
+    }, 4000);
+
+    return () => {
+      cancelled = true;
+      clearInterval(poll);
+    };
+  }, [orderId, isPickedUp]);
+
+  if (isPickedUp) {
+    return (
+      <div className="flex min-h-dvh flex-col items-center justify-center gap-3 bg-main px-6 text-center text-white">
+        <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white/15">
+          <Check className="h-8 w-8" />
+        </span>
+        <h1 className="text-lg font-bold">Kustodi Berpindah ke Kurir</h1>
+        <p className="text-sm text-white/70">Barang sudah dikonfirmasi diambil. Anda aman — dana terkunci sampai penyaluran.</p>
+        <button
+          type="button"
+          onClick={() => router.replace(`/dashboard/toko/orders/${orderId}`)}
+          className="mt-3 rounded-full bg-white px-6 py-3 text-sm font-bold text-main"
+        >
+          Kembali ke Order
+        </button>
+      </div>
+    );
+  }
+
   if (!qrData) return null;
+
+  const pinDigits = qrData.fallback_pin ? qrData.fallback_pin.split("") : [];
 
   return (
     <div className="flex min-h-dvh flex-col bg-main">
@@ -63,7 +131,9 @@ export function StoreOrderQR({ orderId }: { orderId: string }) {
         </button>
         <div>
           <h1 className="text-lg font-bold text-white">Serah Terima ke Kurir</h1>
-          <p className="text-xs text-white/80">Minta Kurir Dewi memindai QR ini</p>
+          <p className="text-xs text-white/80">
+            {courierName ? `Minta ${courierName} memindai QR ini` : "Minta kurir memindai QR ini"}
+          </p>
         </div>
       </div>
 
@@ -71,6 +141,7 @@ export function StoreOrderQR({ orderId }: { orderId: string }) {
         <div className="flex flex-col items-center rounded-3xl bg-white p-6 shadow-xl">
           <div className="relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl bg-black/5">
             {qrImageUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element -- dynamic data: URL, next/image doesn't support this
               <img src={qrImageUrl} alt="QR Code" className="h-full w-full object-contain mix-blend-multiply" />
             ) : (
               <div className="animate-pulse bg-black/10 w-full h-full"></div>
@@ -98,10 +169,10 @@ export function StoreOrderQR({ orderId }: { orderId: string }) {
             <p className="text-[10px] font-medium text-white/60">berlaku 30 dtk &middot; sekali pakai</p>
           </div>
           <div className="mt-4 flex justify-between gap-2">
-            {qrData.fallback_pin.split("").map((digit, i) => (
+            {pinDigits.map((digit, i) => (
               <div
                 key={i}
-                className="flex aspect-square flex-1 items-center justify-center rounded-xl bg-white text-2xl font-black text-black"
+                className="flex aspect-square flex-1 items-center justify-center rounded-xl bg-white text-xl sm:text-2xl font-black text-black"
               >
                 {digit}
               </div>
@@ -112,8 +183,8 @@ export function StoreOrderQR({ orderId }: { orderId: string }) {
 
       <div className="mt-4 px-6">
         <div className="flex items-start gap-3 rounded-xl bg-white/10 p-4">
-          <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-white/20 text-[10px] font-bold text-white">
-            <span className="translate-y-[-1px]">M</span>
+          <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-white/20 text-white">
+            <SignalHigh className="h-3 w-3" />
           </div>
           <p className="text-[11px] font-medium leading-relaxed text-white">
             Token di-cache 90 detik &mdash; tetap dapat divalidasi walau sinyal sempat putus.
