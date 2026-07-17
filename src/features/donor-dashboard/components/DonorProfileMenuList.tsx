@@ -7,7 +7,7 @@ import { Bell, ChevronRight, FileText, HelpCircle, LogOut, UserPlus } from "luci
 import { clearSession } from "@/shared/utils/authSession";
 
 const MENU_ITEMS = [
-  { href: "/dashboard/donatur/profil/riwayat", icon: FileText, label: "Kuitansi & riwayat donasi" },
+  { href: "/dashboard/donatur/transparansi", icon: FileText, label: "Kuitansi & riwayat donasi" },
   { href: "/dashboard/donatur/profil/tambah-peran", icon: UserPlus, label: "Tambah peran" },
 ];
 

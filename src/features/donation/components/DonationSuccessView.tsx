@@ -80,7 +80,7 @@ export function DonationSuccessView({
         <PressButton
           variant="primary"
           className="mt-5 w-full py-4 text-base"
-          onClick={() => router.push("/dashboard/donatur/profil/riwayat")}
+          onClick={() => router.push("/dashboard/donatur/transparansi")}
         >
           Lacak di Log Transaksi
         </PressButton>
