@@ -10,9 +10,11 @@ import { PasswordStep } from "@/features/auth/register/components/PasswordStep";
 import { RegisterStepHeader } from "@/features/auth/register/components/RegisterStepHeader";
 import { RoleSelectStep } from "@/features/auth/register/components/RoleSelectStep";
 import { SuccessStep } from "@/features/auth/register/components/SuccessStep";
+import { TokoProfileStep, type TokoProfile } from "@/features/auth/register/components/TokoProfileStep";
 import { adminRegisterService } from "@/features/auth/register/services/adminRegisterService";
 import { donorRegisterService } from "@/features/auth/register/services/donorRegisterService";
 import { registerService } from "@/features/auth/register/services/registerService";
+import { tokoRegisterService } from "@/features/auth/register/services/tokoRegisterService";
 import { ROLE_LABELS, type RegisterRole } from "@/features/auth/register/types/register.types";
 import { saveSession } from "@/shared/utils/authSession";
 
@@ -22,6 +24,7 @@ const DEFAULT_OTP_SECONDS = 300;
 const ROLE_BACKEND_VALUE: Partial<Record<RegisterRole, string>> = {
   admin_posko: "admin",
   donatur: "donor",
+  toko_mitra: "store",
 };
 
 export default function RegisterPage() {
@@ -72,7 +75,11 @@ export default function RegisterPage() {
 
   async function handlePasswordSubmit(password: string) {
     if (ROLE_BACKEND_VALUE[role] !== undefined) {
-      await registerService.setPassword(registrationId, password, password);
+      if (role === "toko_mitra") {
+        await registerService.setAdminPassword(registrationId, password, password);
+      } else {
+        await registerService.setPassword(registrationId, password, password);
+      }
     }
     setStep(5);
   }
@@ -99,6 +106,26 @@ export default function RegisterPage() {
       donationPreferences,
       true,
     );
+    saveSession(result.token, result.user);
+    setStep(6);
+  }
+
+  async function handleTokoProfileSubmit(profile: TokoProfile) {
+    const result = await tokoRegisterService.completeProfile({
+      registration_id: registrationId,
+      store_name: profile.namaToko,
+      owner_name: profile.ownerName,
+      nib: profile.nib,
+      npwp: profile.npwp,
+      ktp_image_url: profile.ktpImageUrl,
+      bank_name: profile.bankName,
+      bank_account_no: profile.bankAccountNo,
+      bank_account_name: profile.bankAccountName,
+      categories: profile.categories,
+      address: profile.address,
+      latitude: profile.latitude,
+      longitude: profile.longitude,
+    });
     saveSession(result.token, result.user);
     setStep(6);
   }
@@ -134,6 +161,8 @@ export default function RegisterPage() {
           <CompleteProfileStep onNext={handleProfileSubmit} />
         ) : role === "donatur" ? (
           <DonaturProfileStep onNext={handleDonaturProfileSubmit} />
+        ) : role === "toko_mitra" ? (
+          <TokoProfileStep onNext={handleTokoProfileSubmit} />
         ) : (
           <div className="px-6 pt-2 text-sm text-black/50">
             Langkah lanjutan (khusus {ROLE_LABELS[role]}) belum dibuat.
@@ -141,7 +170,17 @@ export default function RegisterPage() {
         ))}
 
       {step === 6 && (
-        <SuccessStep onDone={() => router.push(role === "admin_posko" ? "/dashboard/admin" : "/dashboard/donatur")} />
+        <SuccessStep
+          onDone={() =>
+            router.push(
+              role === "admin_posko" 
+                ? "/dashboard/admin" 
+                : role === "toko_mitra" 
+                  ? "/dashboard/toko" 
+                  : "/dashboard/donatur"
+            )
+          }
+        />
       )}
     </div>
   );

@@ -12,6 +12,9 @@ import type { LoginJwtPayload } from "../types/login.types";
 const ROLE_REDIRECT: Record<string, string> = {
   admin: "/dashboard/admin",
   donor: "/dashboard/donatur",
+  toko: "/dashboard/toko",
+  toko_mitra: "/dashboard/toko",
+  store: "/dashboard/toko",
 };
 
 export function LoginForm() {
