@@ -8,10 +8,6 @@ import PressButton from "@/shared/components/PressButton";
 import { courierTaskService } from "../services/courierTaskService";
 import type { CourierHandoffTokenData } from "../types/courierTask.types";
 
-function secondsUntil(iso: string): number {
-  return Math.max(0, Math.round((new Date(iso).getTime() - Date.now()) / 1000));
-}
-
 function formatTime(iso: string): string {
   return `${new Date(iso).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })} WIB`;
 }
@@ -34,7 +30,7 @@ export function CourierHandoffQr({
   const router = useRouter();
   const [token, setToken] = useState(initialToken);
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
-  const [secondsLeft, setSecondsLeft] = useState(() => secondsUntil(initialToken.cache_valid_until));
+  const [secondsLeft, setSecondsLeft] = useState(initialToken.refresh_in_seconds);
   const [confirmed, setConfirmed] = useState(false);
   const [confirmedAt, setConfirmedAt] = useState<string | null>(null);
   const confirmedRef = useRef(false);
@@ -60,7 +56,7 @@ export function CourierHandoffQr({
     courierTaskService.handoffToken(orderId).then((next) => {
       if (!cancelled) {
         setToken(next);
-        setSecondsLeft(secondsUntil(next.cache_valid_until));
+        setSecondsLeft(next.refresh_in_seconds);
       }
     });
 
