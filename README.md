@@ -266,29 +266,3 @@ Copy `.env.example` to `.env` and set the backend base URL.
    npm run build
    npm run start
    ```
-
-## API Integration Notes
-
-- The frontend expects the backend response envelope format: `{ status, message, data }`.
-- Authenticated requests are routed through `src/shared/services/apiClient.ts`.
-- Login redirects users by backend role to the correct dashboard.
-- QR scanning uses `BarcodeDetector` when available and falls back to `jsqr` when needed.
-
-## Copyright Materials
-
-This repository contains frontend source code and original project assets created by the team. No copyrighted music, external illustration packs, or bundled datasets are included. Third-party packages are listed in `package.json` and remain under their respective licenses.
-
-## Current Limitations
-
-- This frontend depends on a live backend API; without it, most dashboard flows cannot be exercised meaningfully.
-- PWA behavior and camera/scanner features are best validated on real mobile devices.
-- Some field workflows depend on browser support for geolocation, camera access, and install prompts.
-
-## Judging Notes
-
-If this project is being reviewed in a hackathon context, the strongest areas to inspect are:
-
-- **end-to-end role completeness** across donor, admin, store, and courier,
-- **API fidelity** between frontend screens and backend contracts,
-- **operational trust design** through transparency, QR/PIN handoff, and proof capture,
-- **mobile readiness** through PWA installability and field-oriented interaction patterns.
