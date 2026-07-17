@@ -1,17 +1,18 @@
 "use client";
 
 import { useEffect } from "react";
-import { Camera, Check, MapPin, Mic, MicOff, RefreshCw } from "lucide-react";
+import { Check, MapPin, Mic, MicOff, RefreshCw } from "lucide-react";
 import PressButton from "@/shared/components/PressButton";
 import { useReverseGeocode } from "../hooks/useReverseGeocode";
 import { useSpeechToText } from "../hooks/useSpeechToText";
 import type { DisasterType, EventPhoto } from "../types/createEvent.types";
 
-const DISASTER_TYPES: { id: DisasterType; label: string; emoji: string }[] = [
-  { id: "banjir", label: "Banjir", emoji: "🌊" },
-  { id: "gempa", label: "Gempa", emoji: "🏚️" },
-  { id: "longsor", label: "Longsor", emoji: "⛰️" },
-  { id: "erupsi", label: "Erupsi", emoji: "🌋" },
+const DISASTER_TYPES: { id: DisasterType; label: string }[] = [
+  { id: "banjir", label: "Banjir" },
+  { id: "gempa", label: "Gempa" },
+  { id: "longsor", label: "Longsor" },
+  { id: "erupsi", label: "Erupsi" },
+  { id: "lainnya", label: "Lainnya" },
 ];
 
 export function EventDetailsStep({
@@ -26,7 +27,6 @@ export function EventDetailsStep({
   onAddressChange,
   radiusMeters,
   onRadiusChange,
-  onAddPhoto,
   onNext,
 }: {
   photos: EventPhoto[];
@@ -40,7 +40,6 @@ export function EventDetailsStep({
   onAddressChange: (value: string) => void;
   radiusMeters: number;
   onRadiusChange: (value: number) => void;
-  onAddPhoto: () => void;
   onNext: () => void;
 }) {
   const firstPhoto = photos[0];
@@ -56,27 +55,15 @@ export function EventDetailsStep({
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-surface">
       <div className="flex-1 overflow-y-auto px-6 pb-28 pt-4">
-        <div className="flex gap-2">
-          {photos.map((photo, i) => (
-            <div key={i} className="relative h-16 w-16 overflow-hidden rounded-xl border border-black/10">
-              {/* eslint-disable-next-line @next/next/no-img-element -- captured data URL, not an optimizable static asset */}
-              <img src={photo.dataUrl} alt={`Foto ${i + 1}`} className="h-full w-full object-cover" />
-              <span className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-success text-white">
-                <Check size={10} />
-              </span>
-            </div>
-          ))}
-          {photos.length < 3 && (
-            <button
-              type="button"
-              onClick={onAddPhoto}
-              className="flex h-16 w-16 flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-black/20 text-black/40"
-            >
-              <Camera size={18} />
-              <span className="text-[10px]">Tambah</span>
-            </button>
-          )}
-        </div>
+        {photos[0] && (
+          <div className="relative h-40 w-full overflow-hidden rounded-2xl border border-black/10">
+            {/* eslint-disable-next-line @next/next/no-img-element -- captured data URL, not an optimizable static asset */}
+            <img src={photos[0].dataUrl} alt="Foto bencana" className="h-full w-full object-cover" />
+            <span className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-success text-white">
+              <Check size={14} />
+            </span>
+          </div>
+        )}
 
         <label className="mt-6 flex flex-col gap-1.5 text-sm font-medium text-black">
           Nama bencana
@@ -123,7 +110,7 @@ export function EventDetailsStep({
                   disasterType === type.id ? "border-main bg-main/10 text-main" : "border-black/10 text-black/60"
                 }`}
               >
-                {type.emoji} {type.label}
+                {type.label}
               </button>
             ))}
           </div>

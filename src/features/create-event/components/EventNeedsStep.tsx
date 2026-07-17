@@ -122,7 +122,7 @@ export function EventNeedsStep({
           disabled={selectedCount === 0 || isSubmitting}
           onClick={onSubmit}
         >
-          {isSubmitting ? "Menerbitkan..." : "Terbitkan Event ke Peta 🚀"}
+          {isSubmitting ? "Menerbitkan..." : "Terbitkan Event"}
         </PressButton>
       </div>
     </div>

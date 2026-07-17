@@ -1,19 +1,19 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import type { TokoProfile } from "../components/TokoProfileStep";
 
 export function useTokoProfileStep(onNext: (profile: TokoProfile) => Promise<void>) {
-  const [namaToko, setNamaToko] = useState("Toko Berkah Jaya");
-  const [ownerName, setOwnerName] = useState("Herman T.");
-  const [nib, setNib] = useState("8120014782915");
-  const [npwp, setNpwp] = useState("09.254.294.3");
+  const [namaToko, setNamaToko] = useState("");
+  const [ownerName, setOwnerName] = useState("");
+  const [nib, setNib] = useState("");
+  const [npwp, setNpwp] = useState("");
   const [ktpFile, setKtpFile] = useState<File | null>(null);
-  const [bankName, setBankName] = useState("BCA");
-  const [bankAccountNo, setBankAccountNo] = useState("5271088341");
-  const [bankAccountName, setBankAccountName] = useState("Herman S.");
-  const [address, setAddress] = useState("Jl. Otista Raya 45, Jaktim");
-  const [latitude, setLatitude] = useState(-6.2241);
-  const [longitude, setLongitude] = useState(106.8672);
-  const [categories, setCategories] = useState<string[]>(["Sembako", "Air mineral"]);
+  const [bankName, setBankName] = useState("");
+  const [bankAccountNo, setBankAccountNo] = useState("");
+  const [bankAccountName, setBankAccountName] = useState("");
+  const [address, setAddress] = useState("");
+  const [latitude, setLatitude] = useState(0);
+  const [longitude, setLongitude] = useState(0);
+  const [categories, setCategories] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isLocating, setIsLocating] = useState(false);
   const [geoError, setGeoError] = useState("");
@@ -57,10 +57,6 @@ export function useTokoProfileStep(onNext: (profile: TokoProfile) => Promise<voi
       { enableHighAccuracy: true, timeout: 10000 },
     );
   }, []);
-
-  useEffect(() => {
-    locateMe();
-  }, [locateMe]);
 
   function toggleCategory(cat: string) {
     setCategories((prev) => (prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]));

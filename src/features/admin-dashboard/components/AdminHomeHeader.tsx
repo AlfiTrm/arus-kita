@@ -19,7 +19,9 @@ export function AdminHomeHeader({
   return (
     <div className="flex items-center justify-between px-6 pt-6">
       <div>
-        <h1 className="text-lg font-bold text-black">Halo, {isLoading ? "..." : firstName} 👋</h1>
+        <h1 className="text-lg font-bold text-black">
+          Halo, <span className="text-main">{isLoading ? "..." : firstName}</span>
+        </h1>
         {!isLoading && (
           <p
             className={`mt-0.5 flex items-center gap-1 text-xs font-semibold ${

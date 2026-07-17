@@ -1,4 +1,4 @@
-export type DisasterType = "banjir" | "gempa" | "longsor" | "erupsi";
+export type DisasterType = "banjir" | "gempa" | "longsor" | "erupsi" | "lainnya";
 
 export interface EventPhoto {
   dataUrl: string;

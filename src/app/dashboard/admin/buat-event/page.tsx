@@ -154,7 +154,6 @@ export default function CreateEventPage() {
           onAddressChange={setAddress}
           radiusMeters={radiusMeters}
           onRadiusChange={setRadiusMeters}
-          onAddPhoto={() => setStep(1)}
           onNext={() => setStep(3)}
         />
       )}
