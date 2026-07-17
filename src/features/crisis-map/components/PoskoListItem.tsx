@@ -1,5 +1,6 @@
 import { Check } from "lucide-react";
 import { formatRupiahCompact } from "@/shared/utils/formatCurrency";
+import { URGENCY_LABEL } from "../constants/urgency";
 import type { PoskoSummaryItem, UrgencyLevel } from "../types/crisisMap.types";
 
 const URGENCY_TEXT: Record<UrgencyLevel, string> = {
@@ -14,13 +15,6 @@ const URGENCY_BAR: Record<UrgencyLevel, string> = {
   medium: "bg-warning",
   low: "bg-caution",
   funded: "bg-success",
-};
-
-const URGENCY_LABEL: Record<UrgencyLevel, string> = {
-  critical: "Kritis",
-  medium: "Sedang",
-  low: "Rendah",
-  funded: "Terdanai",
 };
 
 function getProvince(address: string): string {

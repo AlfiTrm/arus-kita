@@ -9,6 +9,7 @@ const POLL_INTERVAL_MS = 15000;
 export function useDistributionList() {
   const [distributions, setDistributions] = useState<Distribution[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
@@ -24,6 +25,8 @@ export function useDistributionList() {
         if (!cancelled) {
           setError(err instanceof Error ? err.message : "Failed to load distribution data");
         }
+      } finally {
+        if (!cancelled) setIsLoading(false);
       }
     }
 
@@ -36,5 +39,5 @@ export function useDistributionList() {
     };
   }, []);
 
-  return { distributions, error };
+  return { distributions, error, isLoading };
 }

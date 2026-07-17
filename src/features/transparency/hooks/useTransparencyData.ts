@@ -9,6 +9,7 @@ const POLL_INTERVAL_MS = 30000;
 export function useTransparencyData() {
   const [data, setData] = useState<TransparencyData | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
@@ -24,6 +25,8 @@ export function useTransparencyData() {
         if (!cancelled) {
           setError(err instanceof Error ? err.message : "Failed to load transparency data");
         }
+      } finally {
+        if (!cancelled) setIsLoading(false);
       }
     }
 
@@ -36,5 +39,5 @@ export function useTransparencyData() {
     };
   }, []);
 
-  return { data, error };
+  return { data, error, isLoading };
 }

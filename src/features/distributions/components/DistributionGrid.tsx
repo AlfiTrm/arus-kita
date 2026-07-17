@@ -3,11 +3,12 @@
 import { useState } from "react";
 import { useDistributionList } from "../hooks/useDistributionList";
 import { DistributionCard } from "./DistributionCard";
+import { DistributionCardSkeleton } from "./DistributionCardSkeleton";
 import { DistributionCtaCard } from "./DistributionCtaCard";
 import { DISTRIBUTION_FILTERS, DistributionFilterBar, type DistributionFilter } from "./DistributionFilterBar";
 
 export function DistributionGrid() {
-  const { distributions, error } = useDistributionList();
+  const { distributions, error, isLoading } = useDistributionList();
   const [filter, setFilter] = useState<DistributionFilter>(DISTRIBUTION_FILTERS[0]);
 
   let items = distributions;
@@ -28,10 +29,10 @@ export function DistributionGrid() {
       {error && <p className="mt-8 text-center text-sm text-error">{error}</p>}
 
       <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {items.map((item) => (
-          <DistributionCard key={item.verification_id} item={item} />
-        ))}
-        <DistributionCtaCard />
+        {isLoading
+          ? Array.from({ length: 6 }).map((_, i) => <DistributionCardSkeleton key={i} />)
+          : items.map((item) => <DistributionCard key={item.verification_id} item={item} />)}
+        {!isLoading && <DistributionCtaCard />}
       </div>
     </div>
   );

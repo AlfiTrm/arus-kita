@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { Check } from "lucide-react";
 import PressButton from "@/shared/components/PressButton";
-import { HeroMapPreview } from "./HeroMapPreview";
+import { AnimatedStat } from "./AnimatedStat";
+import { HeroMapPreviewLoader } from "./HeroMapPreviewLoader";
 
 const STATS = [
   { value: "Rp4,2 M", label: "tersalurkan & terverifikasi" },
@@ -31,22 +31,14 @@ export function HeroSection() {
               </PressButton>
             </Link>
           </div>
-
-          <p className="mt-4 flex items-center gap-1.5 text-sm text-black/50">
-            <Check size={16} className="text-success" />
-            Tanpa unduh aplikasi — buka di browser, pasang sebagai PWA di layar utama
-          </p>
         </div>
 
-        <HeroMapPreview />
+        <HeroMapPreviewLoader />
       </div>
 
       <dl className="mt-16 grid grid-cols-2 gap-8 border-t border-black/5 pt-10 md:grid-cols-4">
-        {STATS.map((stat) => (
-          <div key={stat.label}>
-            <dt className="text-2xl font-bold text-main">{stat.value}</dt>
-            <dd className="mt-1 text-sm text-black/50">{stat.label}</dd>
-          </div>
+        {STATS.map((stat, i) => (
+          <AnimatedStat key={stat.label} value={stat.value} label={stat.label} delayMs={i * 100} />
         ))}
       </dl>
     </section>

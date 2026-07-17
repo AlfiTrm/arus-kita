@@ -9,6 +9,7 @@ const POLL_INTERVAL_MS = 8000;
 export function useDashboardSummary() {
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
@@ -24,6 +25,8 @@ export function useDashboardSummary() {
         if (!cancelled) {
           setError(err instanceof Error ? err.message : "Failed to load posko summary");
         }
+      } finally {
+        if (!cancelled) setIsLoading(false);
       }
     }
 
@@ -36,5 +39,5 @@ export function useDashboardSummary() {
     };
   }, []);
 
-  return { summary, error };
+  return { summary, error, isLoading };
 }

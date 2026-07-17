@@ -1,24 +1,22 @@
 import L from "leaflet";
 import { renderToStaticMarkup } from "react-dom/server";
 import { Marker, Popup } from "react-leaflet";
-import type { Posko, UrgencyLevel } from "../types/crisisMap.types";
-
-const URGENCY_COLOR_VAR: Record<UrgencyLevel, string> = {
-  critical: "var(--color-error)",
-  medium: "var(--color-warning)",
-  low: "var(--color-caution)",
-  funded: "var(--color-success)",
-};
+import { URGENCY_COLOR_VAR } from "../constants/urgency";
+import type { Posko } from "../types/crisisMap.types";
 
 function buildIcon(posko: Posko) {
   const isFunded = posko.urgency_level === "funded";
   const color = URGENCY_COLOR_VAR[posko.urgency_level] ?? "var(--color-warning)";
 
   const html = renderToStaticMarkup(
-    <div className="relative flex h-10 w-10 items-center justify-center">
+    <div
+      role="img"
+      aria-label={`${posko.name}: ${isFunded ? "terdanai penuh" : `${posko.funding_percentage}% terdanai`}`}
+      className="relative flex h-11 w-11 items-center justify-center"
+    >
       {!isFunded && (
         <span
-          className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-40"
+          className="absolute inline-flex h-10 w-10 animate-ping rounded-full opacity-40"
           style={{ backgroundColor: color }}
         />
       )}
@@ -34,8 +32,8 @@ function buildIcon(posko: Posko) {
   return L.divIcon({
     html,
     className: "",
-    iconSize: [40, 40],
-    iconAnchor: [20, 20],
+    iconSize: [44, 44],
+    iconAnchor: [22, 22],
   });
 }
 

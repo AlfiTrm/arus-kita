@@ -9,6 +9,7 @@ const POLL_INTERVAL_MS = 8000;
 export function usePoskoList() {
   const [posko, setPosko] = useState<Posko[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
@@ -24,6 +25,8 @@ export function usePoskoList() {
         if (!cancelled) {
           setError(err instanceof Error ? err.message : "Failed to load posko data");
         }
+      } finally {
+        if (!cancelled) setIsLoading(false);
       }
     }
 
@@ -36,5 +39,5 @@ export function usePoskoList() {
     };
   }, []);
 
-  return { posko, error };
+  return { posko, error, isLoading };
 }
