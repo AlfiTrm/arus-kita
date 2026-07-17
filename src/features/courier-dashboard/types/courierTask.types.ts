@@ -75,6 +75,18 @@ export interface CourierArrivedResponse {
   data: CourierArrivedData;
 }
 
+export interface CourierArrivedPostData {
+  order_id: string;
+  order_status: string;
+  arrived_at_post_at: string;
+}
+
+export interface CourierArrivedPostResponse {
+  status: { code: number; isSuccess: boolean };
+  message: string;
+  data: CourierArrivedPostData;
+}
+
 export interface CourierHandoffTokenData {
   order_id: string;
   token_id: string;

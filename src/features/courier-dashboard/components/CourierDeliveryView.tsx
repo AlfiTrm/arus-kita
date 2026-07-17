@@ -43,8 +43,9 @@ export function CourierDeliveryView({ task }: { task: CourierTaskDetail }) {
     setIsMarkingArrival(true);
     setArrivalError(null);
     try {
-      const data = await courierTaskService.arrivedPost(task.order_id);
-      setHandoffToken(data);
+      await courierTaskService.arrivedPost(task.order_id);
+      const token = await courierTaskService.handoffToken(task.order_id);
+      setHandoffToken(token);
     } catch (err) {
       setArrivalError(err instanceof Error ? err.message : "Gagal memulai serah terima");
     } finally {
