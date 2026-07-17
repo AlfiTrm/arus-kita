@@ -1,8 +1,8 @@
 "use client";
 
-import { useCallback, useState } from "react";
-import { Loader2, MapPin, Navigation } from "lucide-react";
+import { Loader2, MapPin, Navigation, Landmark } from "lucide-react";
 import PressButton from "@/shared/components/PressButton";
+import { useTokoProfileStep } from "../hooks/useTokoProfileStep";
 
 const CATEGORY_OPTIONS = ["Sembako", "Air mineral", "Apotek", "Bangunan"];
 
@@ -11,7 +11,7 @@ export interface TokoProfile {
   ownerName: string;
   nib: string;
   npwp: string;
-  ktpImageUrl: string;
+  ktpFile: File | null;
   bankName: string;
   bankAccountNo: string;
   bankAccountName: string;
@@ -22,89 +22,21 @@ export interface TokoProfile {
 }
 
 export function TokoProfileStep({ onNext }: { onNext: (profile: TokoProfile) => Promise<void> }) {
-  const [namaToko, setNamaToko] = useState("Toko Berkah Jaya");
-  const [ownerName, setOwnerName] = useState("Herman T.");
-  const [nib, setNib] = useState("8120014782915");
-  const [npwp, setNpwp] = useState("09.254.294.3");
-  const [ktpImageUrl, setKtpImageUrl] = useState("https://example.com/ktp-herman.jpg");
-  const [bankName, setBankName] = useState("BCA");
-  const [bankAccountNo, setBankAccountNo] = useState("5271088341");
-  const [bankAccountName, setBankAccountName] = useState("Herman S.");
-  const [address, setAddress] = useState("Jl. Otista Raya 45, Jaktim");
-  const [latitude, setLatitude] = useState(-6.2241);
-  const [longitude, setLongitude] = useState(106.8672);
-  const [categories, setCategories] = useState<string[]>(["Sembako", "Air mineral"]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isLocating, setIsLocating] = useState(false);
-  const [geoError, setGeoError] = useState("");
-
-  const locateMe = useCallback(() => {
-    if (!navigator.geolocation) {
-      setGeoError("Geolokasi tidak didukung browser ini");
-      return;
-    }
-    setIsLocating(true);
-    setGeoError("");
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
-        setLatitude(lat);
-        setLongitude(lng);
-
-        try {
-          const res = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=id`,
-            { headers: { "User-Agent": "PijarNusa/1.0" } },
-          );
-          const data = await res.json();
-          if (data.display_name) {
-            setAddress(data.display_name);
-          }
-        } catch {
-          // reverse geocode gagal, biarkan address diisi manual
-        }
-
-        setIsLocating(false);
-      },
-      (err) => {
-        setGeoError(
-          err.code === err.PERMISSION_DENIED
-            ? "Izin lokasi ditolak. Isi manual."
-            : "Gagal mengambil lokasi. Coba lagi.",
-        );
-        setIsLocating(false);
-      },
-      { enableHighAccuracy: true, timeout: 10000 },
-    );
-  }, []);
-
-  function toggleCategory(cat: string) {
-    setCategories((prev) => (prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]));
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setIsLoading(true);
-    try {
-      await onNext({
-        namaToko,
-        ownerName,
-        nib,
-        npwp,
-        ktpImageUrl,
-        bankName,
-        bankAccountNo,
-        bankAccountName,
-        categories,
-        address,
-        latitude,
-        longitude,
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  }
+  const {
+    namaToko, setNamaToko,
+    ownerName, setOwnerName,
+    nib, setNib,
+    npwp, setNpwp,
+    ktpFile, setKtpFile,
+    bankName, setBankName,
+    bankAccountNo, setBankAccountNo,
+    bankAccountName, setBankAccountName,
+    address, setAddress,
+    latitude, longitude,
+    categories, toggleCategory,
+    geoError, isLocating, isLoading,
+    locateMe, handleSubmit
+  } = useTokoProfileStep(onNext);
 
   return (
     <form onSubmit={handleSubmit} className="px-6 pb-28 pt-2">
@@ -157,18 +89,22 @@ export function TokoProfileStep({ onNext }: { onNext: (profile: TokoProfile) => 
         <p className="text-sm font-bold text-black">KTP pemilik + rekening pencairan</p>
         <div className="mt-3 flex flex-col gap-3 rounded-xl border border-black/5 bg-white p-4 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
           <label className="flex flex-col gap-1.5 text-xs font-bold text-black">
-            URL KTP
+            Berkas KTP (PDF/PNG/JPG)
             <input
-              value={ktpImageUrl}
-              onChange={(e) => setKtpImageUrl(e.target.value)}
-              placeholder="https://..."
+              type="file"
+              accept=".pdf,application/pdf,image/png,image/jpeg"
+              onChange={(e) => {
+                if (e.target.files && e.target.files[0]) {
+                  setKtpFile(e.target.files[0]);
+                }
+              }}
               required
-              className="w-full rounded-lg border border-black/10 px-3 py-2 text-xs font-medium outline-none focus:border-main focus:ring-2 focus:ring-main/20"
+              className="w-full rounded-lg border border-black/10 px-3 py-2 text-xs font-medium outline-none focus:border-main focus:ring-2 focus:ring-main/20 file:cursor-pointer file:mr-2 file:rounded-md file:border-0 file:bg-main/10 file:px-2 file:py-1 file:text-[10px] file:font-bold file:text-main hover:file:bg-main/20"
             />
           </label>
           <div className="flex items-center gap-3">
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-[#105EAA]">
-              <span className="text-[10px] font-extrabold tracking-tight text-white">{bankName.slice(0, 3)}</span>
+              <Landmark className="h-4 w-4 text-white" />
             </div>
             <div className="flex flex-1 flex-col gap-1">
               <label className="text-[10px] font-bold text-black/50">Nama bank</label>
