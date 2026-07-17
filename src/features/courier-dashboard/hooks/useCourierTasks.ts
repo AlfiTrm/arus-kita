@@ -40,5 +40,5 @@ export function useCourierTasks() {
     };
   }, [latitude, longitude]);
 
-  return { tasks, error: error ?? geoError, isLoading: isLoading && !geoError };
+  return { tasks, error: error ?? geoError, isLoading: isLoading && !geoError, latitude, longitude };
 }
