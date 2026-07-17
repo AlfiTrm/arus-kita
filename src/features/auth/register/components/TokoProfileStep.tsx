@@ -25,9 +25,9 @@ export function TokoProfileStep({ onNext }: { onNext: (profile: TokoProfile) => 
   const {
     namaToko, setNamaToko,
     ownerName, setOwnerName,
-    nib, setNib,
-    npwp, setNpwp,
-    ktpFile, setKtpFile,
+    nib, setNib, isNibValid,
+    npwp, setNpwp, isNpwpValid,
+    setKtpFile,
     bankName, setBankName,
     bankAccountNo, setBankAccountNo,
     bankAccountName, setBankAccountName,
@@ -68,20 +68,34 @@ export function TokoProfileStep({ onNext }: { onNext: (profile: TokoProfile) => 
           <input
             value={nib}
             onChange={(e) => setNib(e.target.value)}
-            placeholder="NIB"
+            placeholder="13 digit NIB"
+            inputMode="numeric"
             required
-            className="w-full rounded-lg border border-black/10 px-4 py-3 text-sm font-medium outline-none focus:border-main focus:ring-2 focus:ring-main/20"
+            className={`w-full rounded-lg border px-4 py-3 text-sm font-medium outline-none focus:ring-2 ${
+              nib.length > 0 && !isNibValid
+                ? "border-error focus:border-error focus:ring-error/20"
+                : "border-black/10 focus:border-main focus:ring-main/20"
+            }`}
           />
+          {nib.length > 0 && !isNibValid && <span className="text-xs font-normal text-error">NIB harus 13 digit angka</span>}
         </label>
         <label className="flex min-w-0 flex-1 flex-col gap-1.5 text-sm font-bold text-black">
           NPWP
           <input
             value={npwp}
             onChange={(e) => setNpwp(e.target.value)}
-            placeholder="NPWP"
+            placeholder="15/16 digit NPWP"
+            inputMode="numeric"
             required
-            className="w-full rounded-lg border border-black/10 px-4 py-3 text-sm font-medium outline-none focus:border-main focus:ring-2 focus:ring-main/20"
+            className={`w-full rounded-lg border px-4 py-3 text-sm font-medium outline-none focus:ring-2 ${
+              npwp.length > 0 && !isNpwpValid
+                ? "border-error focus:border-error focus:ring-error/20"
+                : "border-black/10 focus:border-main focus:ring-main/20"
+            }`}
           />
+          {npwp.length > 0 && !isNpwpValid && (
+            <span className="text-xs font-normal text-error">NPWP harus 15 atau 16 digit angka</span>
+          )}
         </label>
       </div>
 
@@ -200,7 +214,7 @@ export function TokoProfileStep({ onNext }: { onNext: (profile: TokoProfile) => 
         className="fixed inset-x-0 bottom-0 bg-surface px-6 pt-4"
         style={{ paddingBottom: "max(2rem, env(safe-area-inset-bottom))" }}
       >
-        <PressButton type="submit" variant="primary" className="w-full" disabled={isLoading}>
+        <PressButton type="submit" variant="primary" className="w-full" disabled={isLoading || !isNibValid || !isNpwpValid}>
           {isLoading ? "Menyimpan..." : "Kirim Verifikasi KYC"}
         </PressButton>
       </div>

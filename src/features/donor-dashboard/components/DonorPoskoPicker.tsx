@@ -20,8 +20,8 @@ export function DonorPoskoPicker() {
     return matchesDisaster && matchesSearch;
   });
 
-  function goToDonation(postId: string) {
-    router.push(`/dashboard/donatur/donasi?postId=${postId}`);
+  function goToDetail(postId: string) {
+    router.push(`/dashboard/donatur/posko/${postId}`);
   }
 
   return (
@@ -37,7 +37,7 @@ export function DonorPoskoPicker() {
           <p className="px-2 py-6 text-center text-sm text-black/40">Tidak ada posko yang cocok.</p>
         ) : (
           points.map((point) => (
-            <DonorPoskoListItem key={point.post_id} point={point} onSelect={() => goToDonation(point.post_id)} />
+            <DonorPoskoListItem key={point.post_id} point={point} onSelect={() => goToDetail(point.post_id)} />
           ))
         )}
       </div>

@@ -4,8 +4,8 @@ import type { TokoProfile } from "../components/TokoProfileStep";
 export function useTokoProfileStep(onNext: (profile: TokoProfile) => Promise<void>) {
   const [namaToko, setNamaToko] = useState("");
   const [ownerName, setOwnerName] = useState("");
-  const [nib, setNib] = useState("");
-  const [npwp, setNpwp] = useState("");
+  const [nib, setNibRaw] = useState("");
+  const [npwp, setNpwpRaw] = useState("");
   const [ktpFile, setKtpFile] = useState<File | null>(null);
   const [bankName, setBankName] = useState("");
   const [bankAccountNo, setBankAccountNo] = useState("");
@@ -17,6 +17,17 @@ export function useTokoProfileStep(onNext: (profile: TokoProfile) => Promise<voi
   const [isLoading, setIsLoading] = useState(false);
   const [isLocating, setIsLocating] = useState(false);
   const [geoError, setGeoError] = useState("");
+
+  function setNib(value: string) {
+    setNibRaw(value.replace(/\D/g, "").slice(0, 13));
+  }
+
+  function setNpwp(value: string) {
+    setNpwpRaw(value.replace(/\D/g, "").slice(0, 16));
+  }
+
+  const isNibValid = nib.length === 13;
+  const isNpwpValid = npwp.length === 15 || npwp.length === 16;
 
   const locateMe = useCallback(() => {
     if (!navigator.geolocation) {
@@ -64,6 +75,7 @@ export function useTokoProfileStep(onNext: (profile: TokoProfile) => Promise<voi
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!isNibValid || !isNpwpValid) return;
     setIsLoading(true);
     try {
       await onNext({
@@ -88,8 +100,8 @@ export function useTokoProfileStep(onNext: (profile: TokoProfile) => Promise<voi
   return {
     namaToko, setNamaToko,
     ownerName, setOwnerName,
-    nib, setNib,
-    npwp, setNpwp,
+    nib, setNib, isNibValid,
+    npwp, setNpwp, isNpwpValid,
     ktpFile, setKtpFile,
     bankName, setBankName,
     bankAccountNo, setBankAccountNo,

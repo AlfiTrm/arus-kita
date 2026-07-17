@@ -1,6 +1,6 @@
 "use client";
 
-import { Clock, Lock, Bell } from "lucide-react";
+import { Lock, Bell } from "lucide-react";
 import { useStoreOrderView } from "../hooks/useStoreOrderView";
 import { formatRupiah } from "@/shared/utils/formatCurrency";
 import PressButton from "@/shared/components/PressButton";
@@ -44,15 +44,9 @@ export function StoreOrderView() {
       {currentOrder ? (
         <div className="mt-2 px-6">
           <div className="relative rounded-2xl border-2 border-main p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5 rounded-full bg-error/10 px-2 py-0.5">
-                <div className="h-1.5 w-1.5 rounded-full bg-error" />
-                <span className="text-[10px] font-bold tracking-wide text-error">ORDER BARU &mdash; REBUTAN</span>
-              </div>
-              <div className="flex items-center gap-1 text-error">
-                <Clock className="h-4 w-4" />
-                <span className="text-sm font-bold">09:12</span>
-              </div>
+            <div className="flex items-center gap-1.5 rounded-full bg-error/10 px-2 py-0.5">
+              <div className="h-1.5 w-1.5 rounded-full bg-error" />
+              <span className="text-[10px] font-bold tracking-wide text-error">ORDER BARU &mdash; REBUTAN</span>
             </div>
             <h2 className="mt-3 text-base font-bold leading-snug text-black">
               {currentOrder.request_title} &middot; {currentOrder.post_name}
