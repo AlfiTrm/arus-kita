@@ -13,6 +13,9 @@ const ROLE_REDIRECT: Record<string, string> = {
   admin: "/dashboard/admin",
   donor: "/dashboard/donatur",
   courier: "/dashboard/kurir",
+  toko: "/dashboard/toko",
+  toko_mitra: "/dashboard/toko",
+  store: "/dashboard/toko",
 };
 
 export function LoginForm() {
