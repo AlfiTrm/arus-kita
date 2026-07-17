@@ -1,11 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Poppins, Geist } from "next/font/google";
+import { Poppins, Inter } from "next/font/google";
 import { PwaInstallCapture } from "@/shared/components/PwaInstallCapture";
 import { ServiceWorkerRegister } from "@/shared/components/ServiceWorkerRegister";
 import "@/shared/styles/globals.css";
 import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -36,7 +36,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn("h-full", "antialiased", poppins.variable, "font-sans", geist.variable)}>
+    <html lang="en" className={cn("h-full", "antialiased", poppins.variable, "font-sans", inter.variable)}>
       <body className="min-h-full flex flex-col">
         <PwaInstallCapture />
         <ServiceWorkerRegister />
