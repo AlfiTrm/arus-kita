@@ -1,6 +1,6 @@
 "use client";
 
-import { Download } from "lucide-react";
+import { Download, Star } from "lucide-react";
 import { useStoreGoodness } from "../hooks/useStoreGoodness";
 import { StoreJejakSkeleton } from "./StoreSkeleton";
 
@@ -56,7 +56,7 @@ export function StoreJejak() {
             </div>
             <div className="flex flex-col px-3">
               <span className="text-xl font-bold text-white">
-                {cert.reputation_score} <span className="text-sm">&starf;</span>
+                {cert.reputation_score} <Star className="-mt-0.5 inline h-4 w-4 text-white/80" />
               </span>
               <span className="mt-0.5 text-[10px] text-white/80 leading-tight tracking-wide">
                 reputasi
