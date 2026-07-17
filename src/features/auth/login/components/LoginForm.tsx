@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ShieldCheck } from "lucide-react";
 import PressButton from "@/shared/components/PressButton";
 import { setToken } from "@/shared/utils/authSession";
 import { decodeJwtPayload } from "@/shared/utils/jwt";
@@ -45,14 +44,12 @@ export function LoginForm() {
   return (
     <div className="relative min-h-dvh w-full bg-surface px-6 pb-28 pt-14">
       <div className="mx-auto w-full max-w-sm">
-        <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-secondary">
-          {/* eslint-disable-next-line @next/next/no-img-element -- static local SVG mark, no next/image optimization needed */}
-          <img src="/icon/aruskita-icon.svg" alt="" className="h-7 w-auto" />
-        </span>
+        {/* eslint-disable-next-line @next/next/no-img-element -- static local SVG mark, no next/image optimization needed */}
+        <img src="/icon/aruskita-icon.svg" alt="" className="h-10 w-auto" />
 
-        <h1 className="mt-6 text-3xl font-bold leading-tight text-black">Selamat datang kembali 👋</h1>
+        <h1 className="mt-6 text-3xl font-bold leading-tight text-black">Selamat datang kembali</h1>
         <p className="mt-2 text-base text-black/60">
-          Masuk dengan email & password akun Anda — satu akun untuk semua peran Anda.
+          Masuk ke akun Anda untuk melanjutkan. Satu akun berlaku untuk semua peran di Arus Kita.
         </p>
 
         <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-4">
@@ -86,12 +83,6 @@ export function LoginForm() {
 
           {(error || roleError) && <p className="text-center text-sm text-error">{error ?? roleError}</p>}
         </form>
-
-        <div className="mt-6 flex items-start gap-2 rounded-2xl bg-secondary px-4 py-3 text-xs text-black/70">
-          <ShieldCheck size={16} className="mt-0.5 shrink-0 text-main" />
-          Peran akun (Donatur, Admin Posko, Toko, Kurir) terdeteksi otomatis — Anda diarahkan ke beranda yang
-          sesuai.
-        </div>
       </div>
 
       <div

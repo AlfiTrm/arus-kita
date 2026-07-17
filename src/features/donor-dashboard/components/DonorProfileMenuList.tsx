@@ -2,9 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Bell, ChevronRight, FileText, HelpCircle, LogOut, UserPlus } from "lucide-react";
-import { clearSession } from "@/shared/utils/authSession";
+import { useLogout } from "@/shared/hooks/useLogout";
 
 const MENU_ITEMS = [
   { href: "/dashboard/donatur/transparansi", icon: FileText, label: "Kuitansi & riwayat donasi" },
@@ -12,13 +11,8 @@ const MENU_ITEMS = [
 ];
 
 export function DonorProfileMenuList() {
-  const router = useRouter();
   const [notifEnabled, setNotifEnabled] = useState(true);
-
-  function handleLogout() {
-    clearSession();
-    router.push("/login");
-  }
+  const { logout, isLoggingOut } = useLogout();
 
   return (
     <div className="mt-4 flex flex-col gap-3 px-6">
@@ -71,13 +65,14 @@ export function DonorProfileMenuList() {
 
       <button
         type="button"
-        onClick={handleLogout}
-        className="flex items-center gap-3 rounded-2xl border border-error/10 bg-error/5 px-4 py-3.5 text-left"
+        onClick={logout}
+        disabled={isLoggingOut}
+        className="flex items-center gap-3 rounded-2xl border border-error/10 bg-error/5 px-4 py-3.5 text-left disabled:opacity-60"
       >
         <span className="flex h-9 w-9 items-center justify-center rounded-full bg-error/10 text-error">
           <LogOut size={16} />
         </span>
-        <span className="text-sm font-semibold text-error">Keluar</span>
+        <span className="text-sm font-semibold text-error">{isLoggingOut ? "Keluar..." : "Keluar"}</span>
       </button>
     </div>
   );

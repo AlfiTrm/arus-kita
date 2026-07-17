@@ -8,6 +8,8 @@ const DISASTER_LABELS: Record<string, string> = {
   erupsi: "Erupsi & lainnya",
 };
 
+const BAR_COLOR_PALETTE = ["bg-main", "bg-success", "bg-warning", "bg-error", "bg-caution"];
+
 export function AllocationBreakdown({ data }: { data: DisasterAllocation[] }) {
   return (
     <div className="rounded-2xl border border-black/5 bg-white p-6">
@@ -20,14 +22,17 @@ export function AllocationBreakdown({ data }: { data: DisasterAllocation[] }) {
         </div>
       ) : (
         <div className="mt-5 flex flex-col gap-4">
-          {data.map((item) => (
+          {data.map((item, i) => (
             <div key={item.disaster_event}>
               <div className="flex items-center justify-between text-sm">
                 <span className="text-black/70">{DISASTER_LABELS[item.disaster_event] ?? item.disaster_event}</span>
                 <span className="font-semibold text-main">{item.percentage}%</span>
               </div>
               <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-black/5">
-                <div className="h-full rounded-full bg-main" style={{ width: `${item.percentage}%` }} />
+                <div
+                  className={`h-full rounded-full ${BAR_COLOR_PALETTE[i % BAR_COLOR_PALETTE.length]}`}
+                  style={{ width: `${item.percentage}%` }}
+                />
               </div>
             </div>
           ))}

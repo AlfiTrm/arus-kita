@@ -9,6 +9,7 @@ const POLL_INTERVAL_MS = 15000;
 export function useDonorDashboardMap() {
   const [data, setData] = useState<DonorDashboardMapData | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
@@ -24,6 +25,8 @@ export function useDonorDashboardMap() {
         if (!cancelled) {
           setError(err instanceof Error ? err.message : "Gagal memuat peta");
         }
+      } finally {
+        if (!cancelled) setIsLoading(false);
       }
     }
 
@@ -36,5 +39,5 @@ export function useDonorDashboardMap() {
     };
   }, []);
 
-  return { data, error };
+  return { data, error, isLoading };
 }

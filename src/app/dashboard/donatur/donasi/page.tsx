@@ -4,10 +4,12 @@ import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ChevronLeft, MapPin } from "lucide-react";
 import { DonationForm } from "@/features/donation/components/DonationForm";
+import { DonationFormSkeleton } from "@/features/donation/components/DonationFormSkeleton";
 import { DonationPaymentResult } from "@/features/donation/components/DonationPaymentResult";
 import { DonationSuccessView } from "@/features/donation/components/DonationSuccessView";
 import { donationPaymentService } from "@/features/donation/services/donationPaymentService";
 import type { DonationPayment, PaymentMethod } from "@/features/donation/types/donationPayment.types";
+import { DonorPoskoPicker } from "@/features/donor-dashboard/components/DonorPoskoPicker";
 import { useDonorPostDetail } from "@/features/donor-dashboard/hooks/useDonorPostDetail";
 
 function DonationPageContent() {
@@ -59,9 +61,9 @@ function DonationPageContent() {
       )}
 
       {!postId ? (
-        <p className="px-6 pt-6 text-sm text-black/40">Pilih posko dulu dari peta untuk mulai donasi.</p>
+        <DonorPoskoPicker />
       ) : isLoadingPost ? (
-        <p className="px-6 pt-6 text-sm text-black/40">Memuat posko...</p>
+        <DonationFormSkeleton />
       ) : postError || !post ? (
         <p className="px-6 pt-6 text-sm text-error">{postError ?? "Posko tidak ditemukan"}</p>
       ) : payment && isPaid ? (
@@ -92,7 +94,7 @@ function DonationPageContent() {
 
 export default function DonationPage() {
   return (
-    <Suspense fallback={<p className="px-6 pt-6 text-sm text-black/40">Memuat...</p>}>
+    <Suspense fallback={<DonationFormSkeleton />}>
       <DonationPageContent />
     </Suspense>
   );

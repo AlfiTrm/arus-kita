@@ -7,9 +7,13 @@ import type { DonorPostDetail } from "../types/donorPostDetail.types";
 export function useDonorPostDetail(postId: string) {
   const [post, setPost] = useState<DonorPostDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(Boolean(postId));
 
   useEffect(() => {
+    if (!postId) {
+      return;
+    }
+
     let cancelled = false;
 
     async function fetchPost() {

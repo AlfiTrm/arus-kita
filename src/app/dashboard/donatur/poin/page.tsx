@@ -1,5 +1,6 @@
 "use client";
 
+import { DonorPointsSkeleton } from "@/features/donor-dashboard/components/DonorPointsSkeleton";
 import { PoinBalanceCard } from "@/features/donor-dashboard/components/PoinBalanceCard";
 import { PointsHistoryList } from "@/features/donor-dashboard/components/PointsHistoryList";
 import { PointsRedeemList } from "@/features/donor-dashboard/components/PointsRedeemList";
@@ -9,7 +10,7 @@ export default function DonorPointsPage() {
   const { points, isLoading, error } = useDonorPoints();
 
   if (isLoading) {
-    return <p className="px-6 pt-6 text-sm text-black/40">Memuat poin...</p>;
+    return <DonorPointsSkeleton />;
   }
 
   if (error || !points) {

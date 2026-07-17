@@ -1,6 +1,7 @@
 "use client";
 
 import { use } from "react";
+import { DonorTransactionDetailSkeleton } from "@/features/donor-dashboard/components/DonorTransactionDetailSkeleton";
 import { DonorTransactionDetailView } from "@/features/donor-dashboard/components/DonorTransactionDetailView";
 import { useDonorTransactionDetail } from "@/features/donor-dashboard/hooks/useDonorTransactionDetail";
 
@@ -9,7 +10,7 @@ export default function DonorTransactionDetailPage({ params }: { params: Promise
   const { transaction, isLoading, error } = useDonorTransactionDetail(donationId);
 
   if (isLoading) {
-    return <p className="px-6 pt-6 text-sm text-black/40">Memuat detail transaksi...</p>;
+    return <DonorTransactionDetailSkeleton />;
   }
 
   if (error || !transaction) {
