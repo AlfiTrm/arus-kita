@@ -91,14 +91,6 @@ export function QrScannerView({ eventTitle, eventCode }: { eventTitle: string; e
           </div>
         )}
 
-        {status === "unsupported" && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/80 px-8 text-center text-white">
-            <AlertTriangle size={28} className="text-warning" />
-            <p className="text-sm">Browser ini belum mendukung pemindaian QR bawaan.</p>
-            <p className="text-xs text-white/50">Coba buka lewat Chrome/Edge terbaru di Android.</p>
-          </div>
-        )}
-
         {status === "denied" && (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/80 px-8 text-center text-white">
             <AlertTriangle size={28} className="text-warning" />
