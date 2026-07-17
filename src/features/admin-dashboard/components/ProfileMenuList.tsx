@@ -80,7 +80,7 @@ export function ProfileMenuList() {
         <span className="text-sm font-semibold text-error">Keluar</span>
       </button>
 
-      <p className="mt-3 text-center text-xs text-black/30">PijarNusa PWA v1.0</p>
+      <p className="mt-3 text-center text-xs text-black/30">Arus Kita PWA v1.0</p>
     </div>
   );
 }

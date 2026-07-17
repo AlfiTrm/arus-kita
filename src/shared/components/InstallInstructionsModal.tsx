@@ -26,7 +26,7 @@ export function InstallInstructionsModal({
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-4" onClick={onClose}>
       <div className="w-full max-w-sm rounded-2xl bg-surface p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold text-black">Pasang PijarNusa</h2>
+          <h2 className="text-lg font-bold text-black">Pasang Arus Kita</h2>
           <button onClick={onClose} className="text-black/40 hover:text-black" aria-label="Tutup">
             <X size={20} />
           </button>

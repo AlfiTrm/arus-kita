@@ -25,14 +25,14 @@ export function InstallQRModal({ onClose }: { onClose: () => void }) {
         </div>
 
         <p className="mt-2 text-left text-sm text-black/60">
-          PijarNusa dirancang buat dipakai di lapangan lewat HP. Scan QR ini pake kamera ponsel buat buka &
+          Arus Kita dirancang buat dipakai di lapangan lewat HP. Scan QR ini pake kamera ponsel buat buka &
           pasang.
         </p>
 
         <div className="mt-5 flex justify-center">
           {qrDataUrl ? (
             // eslint-disable-next-line @next/next/no-img-element -- dynamic data: URL, next/image doesn't support this
-            <img src={qrDataUrl} alt="QR code buat buka PijarNusa di HP" width={200} height={200} />
+            <img src={qrDataUrl} alt="QR code buat buka Arus Kita di HP" width={200} height={200} />
           ) : (
             <div className="h-[200px] w-[200px] animate-pulse rounded-lg bg-black/5" />
           )}

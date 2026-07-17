@@ -1,4 +1,4 @@
-const SPLASH_SHOWN_KEY = "pijarnusa_splash_shown";
+const SPLASH_SHOWN_KEY = "aruskita_splash_shown";
 
 export function hasShownSplash(): boolean {
   return sessionStorage.getItem(SPLASH_SHOWN_KEY) === "1";

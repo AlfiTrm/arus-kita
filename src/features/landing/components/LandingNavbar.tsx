@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { MapPin, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { InstallButton } from "@/shared/components/InstallButton";
 
 const NAV_LINKS = [
@@ -33,11 +33,9 @@ export function LandingNavbar() {
     <>
       <header className="sticky top-0 z-70 border-b border-black/5 bg-surface md:bg-surface/95 md:backdrop-blur">
         <div className="container flex h-16 items-center justify-between gap-4">
-          <Link href="/" className="flex items-center gap-2 font-bold tracking-tight text-black" onClick={closeMenu}>
-            <span className="flex h-7 w-7 items-center justify-center rounded-md bg-main text-white">
-              <MapPin size={16} />
-            </span>
-            PIJARNUSA
+          <Link href="/" className="flex items-center" onClick={closeMenu}>
+            {/* eslint-disable-next-line @next/next/no-img-element -- static local SVG wordmark, no next/image optimization needed */}
+            <img src="/icon/aruskita-full.svg" alt="Arus Kita" className="h-6 w-auto" />
           </Link>
 
           <nav className="hidden items-center gap-8 text-sm font-medium md:flex">
@@ -109,7 +107,7 @@ export function LandingNavbar() {
 
           <div className="mt-auto rounded-[28px] bg-secondary/55 p-5 shadow-[0_20px_48px_rgba(2,128,144,0.16)]">
             <p className="max-w-xs text-sm font-medium leading-6 text-black">
-              Pasang PijarNusa ke layar utama untuk masuk ke mode app dan langsung mulai dari splash screen.
+              Pasang Arus Kita ke layar utama untuk masuk ke mode app dan langsung mulai dari splash screen.
             </p>
             <div className="mt-4">
               <InstallButton className="w-full justify-center px-5 py-3 text-sm" />

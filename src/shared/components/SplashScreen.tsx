@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { MapPin } from "lucide-react";
 
 const STATUS_STEPS = [
   "Menyiapkan mode offline-first...",
@@ -36,10 +35,11 @@ export function SplashScreen({ onFinish }: { onFinish: () => void }) {
 
       <div className="flex flex-col items-center gap-4">
         <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-secondary">
-          <MapPin size={36} className="text-main" />
+          {/* eslint-disable-next-line @next/next/no-img-element -- static local SVG mark, no next/image optimization needed */}
+          <img src="/icon/aruskita-icon.svg" alt="" className="h-9 w-auto" />
         </div>
         <div className="text-center">
-          <p className="text-2xl font-bold text-white">PijarNusa</p>
+          <p className="text-2xl font-bold text-white">Arus Kita</p>
           <p className="mt-1 text-sm text-white/70">Bantuan sampai. Terbukti.</p>
         </div>
       </div>

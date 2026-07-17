@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { MapPin, ShieldCheck } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 import PressButton from "@/shared/components/PressButton";
 import { setToken } from "@/shared/utils/authSession";
 import { decodeJwtPayload } from "@/shared/utils/jwt";
@@ -45,8 +45,9 @@ export function LoginForm() {
   return (
     <div className="relative min-h-dvh w-full bg-surface px-6 pb-28 pt-14">
       <div className="mx-auto w-full max-w-sm">
-        <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-main text-white">
-          <MapPin size={26} />
+        <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-secondary">
+          {/* eslint-disable-next-line @next/next/no-img-element -- static local SVG mark, no next/image optimization needed */}
+          <img src="/icon/aruskita-icon.svg" alt="" className="h-7 w-auto" />
         </span>
 
         <h1 className="mt-6 text-3xl font-bold leading-tight text-black">Selamat datang kembali 👋</h1>

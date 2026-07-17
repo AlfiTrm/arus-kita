@@ -19,7 +19,7 @@ export function HeroSection() {
             Donasi yang <span className="text-main">terbukti sampai</span>, bukan sekadar terkirim.
           </h1>
           <p className="mt-5 max-w-md text-black/60">
-            PijarNusa mengunci donasi Anda ke pesanan barang nyata di toko lokal dekat bencana — diantar
+            Arus Kita mengunci donasi Anda ke pesanan barang nyata di toko lokal dekat bencana — diantar
             relawan, diverifikasi foto &amp; GPS, dan tercatat di ledger yang bisa diaudit siapa pun.
           </p>
 

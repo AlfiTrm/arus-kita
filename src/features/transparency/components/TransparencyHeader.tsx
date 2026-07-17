@@ -8,7 +8,7 @@ import type { LedgerEntry } from "../types/transparency.types";
 export function TransparencyHeader({ ledger }: { ledger: LedgerEntry[] }) {
   function handleDownload() {
     downloadCsv(
-      `pijarnusa-ledger-${new Date().toISOString().slice(0, 10)}.csv`,
+      `aruskita-ledger-${new Date().toISOString().slice(0, 10)}.csv`,
       ["Waktu", "Peristiwa", "Posko", "Nilai", "Hash"],
       ledger.map((entry) => [entry.occurred_at, entry.event, entry.post_name, entry.value_label, entry.hash]),
     );

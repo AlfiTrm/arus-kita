@@ -15,7 +15,7 @@ export function CtaSection() {
         </div>
 
         <div className="mt-6 flex flex-col gap-3 sm:flex-row md:mt-0 md:shrink-0">
-          <PressButton variant="secondary">Gunakan PijarNusa</PressButton>
+          <PressButton variant="secondary">Gunakan Arus Kita</PressButton>
           <PressButton variant="outlineInverse">Daftar sebagai Mitra</PressButton>
         </div>
       </div>

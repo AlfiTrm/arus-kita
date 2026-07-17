@@ -1,5 +1,5 @@
-const TOKEN_KEY = "pijarnusa_token";
-const USER_KEY = "pijarnusa_user";
+const TOKEN_KEY = "aruskita_token";
+const USER_KEY = "aruskita_user";
 
 export interface StoredUser {
   user_id: string;

@@ -35,7 +35,7 @@ export function EventSuccessStep({
   }, [wizardStartedAt]);
 
   function handleShare() {
-    const shareText = `${eventTitle} (${eventCode}) kini tayang di peta PijarNusa.`;
+    const shareText = `${eventTitle} (${eventCode}) kini tayang di peta Arus Kita.`;
     if (navigator.share) {
       navigator.share({ title: eventTitle, text: shareText }).catch(() => {});
     } else {
