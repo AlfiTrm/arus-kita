@@ -72,6 +72,7 @@ export function CourierDeliveryView({ task }: { task: CourierTaskDetail }) {
     return (
       <CourierHandoffQr
         orderId={task.order_id}
+        orderCode={task.order_code}
         initialToken={handoffToken}
         baselineStatus={task.order_status}
         targetName={task.post_name}

@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import QRCode from "qrcode";
-import { Check, KeyRound } from "lucide-react";
+import { Check, ChevronLeft, KeyRound } from "lucide-react";
 import PressButton from "@/shared/components/PressButton";
 import { courierTaskService } from "../services/courierTaskService";
 import type { CourierHandoffTokenData } from "../types/courierTask.types";
@@ -11,23 +12,31 @@ function secondsUntil(iso: string): number {
   return Math.max(0, Math.round((new Date(iso).getTime() - Date.now()) / 1000));
 }
 
+function formatTime(iso: string): string {
+  return `${new Date(iso).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })} WIB`;
+}
+
 export function CourierHandoffQr({
   orderId,
+  orderCode,
   initialToken,
   baselineStatus,
   targetName,
   onBack,
 }: {
   orderId: string;
+  orderCode: string;
   initialToken: CourierHandoffTokenData;
   baselineStatus: string;
   targetName: string;
   onBack: () => void;
 }) {
+  const router = useRouter();
   const [token, setToken] = useState(initialToken);
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
   const [secondsLeft, setSecondsLeft] = useState(() => secondsUntil(initialToken.cache_valid_until));
   const [confirmed, setConfirmed] = useState(false);
+  const [confirmedAt, setConfirmedAt] = useState<string | null>(null);
   const confirmedRef = useRef(false);
 
   useEffect(() => {
@@ -69,6 +78,7 @@ export function CourierHandoffQr({
         const detail = await courierTaskService.detail(orderId);
         if (detail.order_status !== baselineStatus) {
           confirmedRef.current = true;
+          setConfirmedAt(detail.updated_at);
           setConfirmed(true);
         }
       } catch {
@@ -84,23 +94,51 @@ export function CourierHandoffQr({
 
   if (confirmed) {
     return (
-      <div className="flex h-full flex-col items-center justify-center gap-3 bg-surface px-6 text-center">
-        <span className="flex h-14 w-14 items-center justify-center rounded-full bg-success/10 text-success">
-          <Check size={26} />
-        </span>
-        <h2 className="text-lg font-bold text-black">Dipindai! Kustodi berpindah</h2>
-        <p className="text-sm text-black/50">Barang sudah diterima {targetName}. Tugas ini selesai.</p>
-        <PressButton variant="primary" className="mt-2 w-full max-w-xs" onClick={onBack}>
-          Kembali ke Tugas
-        </PressButton>
+      <div className="flex h-full flex-col bg-surface px-6 py-6">
+        <div className="flex flex-1 flex-col items-center justify-center gap-3 text-center">
+          <span className="flex h-14 w-14 items-center justify-center rounded-full bg-success/10 text-success">
+            <Check size={26} />
+          </span>
+          <div>
+            <h2 className="text-lg font-bold text-black">Dipindai! Kustodi berpindah ke posko</h2>
+            <p className="mt-1 text-sm text-black/50">
+              {confirmedAt ? `${formatTime(confirmedAt)} · ` : ""}Anda bebas tanggung jawab.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex gap-2">
+          <PressButton
+            variant="secondary"
+            className="flex-1"
+            onClick={() => router.push("/dashboard/kurir/jejak")}
+          >
+            Lihat Sertifikat
+          </PressButton>
+          <PressButton variant="primary" className="flex-1" onClick={onBack}>
+            Tugas Berikutnya
+          </PressButton>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="flex h-full flex-col bg-surface px-6 py-6">
-      <h2 className="text-center text-base font-bold text-black">Tunjukkan QR ke {targetName}</h2>
-      <p className="mt-0.5 text-center text-xs text-black/40">Token #{token.token_id.slice(0, 8)}</p>
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={onBack}
+          aria-label="Kembali"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-black/10 text-black"
+        >
+          <ChevronLeft size={18} />
+        </button>
+        <div className="min-w-0">
+          <h2 className="truncate text-base font-bold text-black">Tunjukkan QR ke {targetName}</h2>
+          <p className="truncate text-xs text-black/40">{orderCode} · handshake terakhir</p>
+        </div>
+      </div>
 
       <div className="mt-6 flex justify-center">
         {qrDataUrl ? (
@@ -123,9 +161,9 @@ export function CourierHandoffQr({
 
       <p className="mt-4 text-center text-xs text-black/40">Menunggu {targetName} memindai QR ini...</p>
 
-      <button type="button" onClick={onBack} className="mt-auto text-center text-sm font-semibold text-black/40">
-        Kembali
-      </button>
+      <p className="mt-auto text-center text-[11px] leading-relaxed text-black/30">
+        Dituduh barang hilang? Rantai kustodi tercatat sebagai bukti objektif Anda.
+      </p>
     </div>
   );
 }
