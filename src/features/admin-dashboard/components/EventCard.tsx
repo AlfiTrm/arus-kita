@@ -18,6 +18,7 @@ export function EventCard({ event }: { event: DashboardEvent }) {
   const router = useRouter();
   const [imgError, setImgError] = useState(false);
   const isActive = event.status === "active";
+  const latestOrderId = event.latest_orders?.[0]?.order_id ?? null;
 
   function goToScan() {
     const params = new URLSearchParams({ title: event.title, code: event.event_code });
@@ -107,16 +108,16 @@ export function EventCard({ event }: { event: DashboardEvent }) {
         </div>
       )}
 
-      {(event.can_scan_courier_qr || event.can_add_follow_up_request) && (
+      {(event.can_scan_courier_qr || (event.can_add_follow_up_request && latestOrderId)) && (
         <div className="mt-3 flex flex-col gap-2 px-4 pb-4">
           {event.can_scan_courier_qr && (
             <PressButton variant="primary" className="flex w-full items-center justify-center gap-2" onClick={goToScan}>
               <QrCode size={16} /> Scan QR Kurir — Terima Barang
             </PressButton>
           )}
-          {event.can_add_follow_up_request && (
+          {event.can_add_follow_up_request && latestOrderId && (
             <Link
-              href={`/dashboard/admin/event/${event.post_id}/tambah-kebutuhan`}
+              href={`/dashboard/admin/order/${latestOrderId}/kebutuhan-susulan`}
               className="flex items-center justify-center gap-1 py-1 text-xs font-semibold text-main"
             >
               <Plus size={14} /> Tambah kebutuhan susulan

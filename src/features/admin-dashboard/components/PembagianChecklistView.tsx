@@ -1,6 +1,7 @@
 "use client";
 
-import { Camera, Check, ChevronLeft, ShieldCheck, Zap } from "lucide-react";
+import Link from "next/link";
+import { Camera, Check, ChevronLeft, Plus, ShieldCheck, Zap } from "lucide-react";
 import PressButton from "@/shared/components/PressButton";
 import type { AdminOrderReceivingData } from "../types/adminDistribution.types";
 
@@ -94,6 +95,13 @@ export function PembagianChecklistView({
               );
             })}
           </div>
+
+          <Link
+            href={`/dashboard/admin/order/${data.order_id}/kebutuhan-susulan`}
+            className="mt-3 flex items-center justify-center gap-1 rounded-xl border border-dashed border-black/15 py-2.5 text-xs font-semibold text-main"
+          >
+            <Plus size={13} /> Tambah kebutuhan susulan
+          </Link>
         </div>
       </div>
 

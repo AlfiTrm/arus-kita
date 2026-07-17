@@ -31,7 +31,7 @@ export function LandingNavbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-70 border-b border-black/5 bg-surface md:bg-surface/95 md:backdrop-blur">
+      <header className="sticky top-0 z-9999 border-b border-black/5 bg-surface md:bg-surface/95 md:backdrop-blur">
         <div className="container flex h-16 items-center justify-between gap-4">
           <Link href="/" className="flex items-center" onClick={closeMenu}>
             {/* eslint-disable-next-line @next/next/no-img-element -- static local SVG wordmark, no next/image optimization needed */}
@@ -76,11 +76,17 @@ export function LandingNavbar() {
 
       <div
         id="landing-mobile-menu"
-        className={`fixed inset-0 z-[60] bg-surface transition duration-200 md:hidden ${
+        onClick={closeMenu}
+        className={`fixed inset-0 z-9998 bg-black/20 backdrop-blur-sm transition-opacity duration-300 ease-out md:hidden ${
           isMenuOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
         }`}
       >
-        <div className="container flex min-h-dvh flex-col px-4 pt-24 pb-6">
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className={`container flex min-h-dvh flex-col px-4 pt-24 pb-6 transition-all duration-300 ease-out ${
+            isMenuOpen ? "translate-y-0 opacity-100" : "-translate-y-3 opacity-0"
+          }`}
+        >
           <div className="rounded-[28px] bg-white p-6 shadow-[0_24px_64px_rgba(38,38,38,0.12)]">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-main/70">Navigasi</p>
 
@@ -95,7 +101,7 @@ export function LandingNavbar() {
                     className={
                       isActive
                         ? "rounded-2xl bg-secondary px-4 py-4 text-base font-semibold text-main"
-                        : "rounded-2xl px-4 py-4 text-base font-medium text-black/72 hover:bg-black/[0.03] hover:text-black"
+                        : "rounded-2xl px-4 py-4 text-base font-medium text-black/72 transition-colors hover:bg-black/3 hover:text-black"
                     }
                   >
                     {link.label}
