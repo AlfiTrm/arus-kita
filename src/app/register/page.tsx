@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CompleteProfileStep } from "@/features/auth/register/components/CompleteProfileStep";
+import { CourierProfileStep, type CourierProfile } from "@/features/auth/register/components/CourierProfileStep";
 import { DonaturProfileStep, type DonaturProfile } from "@/features/auth/register/components/DonaturProfileStep";
 import { EmailStep } from "@/features/auth/register/components/EmailStep";
 import { OtpStep } from "@/features/auth/register/components/OtpStep";
@@ -12,6 +13,7 @@ import { RoleSelectStep } from "@/features/auth/register/components/RoleSelectSt
 import { SuccessStep } from "@/features/auth/register/components/SuccessStep";
 import { TokoProfileStep, type TokoProfile } from "@/features/auth/register/components/TokoProfileStep";
 import { adminRegisterService } from "@/features/auth/register/services/adminRegisterService";
+import { courierRegisterService } from "@/features/auth/register/services/courierRegisterService";
 import { donorRegisterService } from "@/features/auth/register/services/donorRegisterService";
 import { registerService } from "@/features/auth/register/services/registerService";
 import { tokoRegisterService } from "@/features/auth/register/services/tokoRegisterService";
@@ -25,6 +27,7 @@ const ROLE_BACKEND_VALUE: Partial<Record<RegisterRole, string>> = {
   admin_posko: "admin",
   donatur: "donor",
   toko_mitra: "store",
+  relawan_kurir: "courier",
 };
 
 export default function RegisterPage() {
@@ -110,6 +113,21 @@ export default function RegisterPage() {
     setStep(6);
   }
 
+  async function handleCourierProfileSubmit(profile: CourierProfile) {
+    const result = await courierRegisterService.completeProfile({
+      registration_id: registrationId,
+      full_name: profile.fullName,
+      nik: profile.nik,
+      vehicle_type: profile.vehicleType,
+      vehicle_capacity_kg: profile.vehicleCapacityKg,
+      operational_area: profile.operationalArea,
+      operation_radius_km: profile.operationRadiusKm,
+      waiver_accepted: profile.waiverAccepted,
+    });
+    saveSession(result.token, result.user);
+    setStep(6);
+  }
+
   async function handleTokoProfileSubmit(profile: TokoProfile) {
     const result = await tokoRegisterService.completeProfile({
       registration_id: registrationId,
@@ -163,6 +181,8 @@ export default function RegisterPage() {
           <DonaturProfileStep onNext={handleDonaturProfileSubmit} />
         ) : role === "toko_mitra" ? (
           <TokoProfileStep onNext={handleTokoProfileSubmit} />
+        ) : role === "relawan_kurir" ? (
+          <CourierProfileStep onNext={handleCourierProfileSubmit} />
         ) : (
           <div className="px-6 pt-2 text-sm text-black/50">
             Langkah lanjutan (khusus {ROLE_LABELS[role]}) belum dibuat.
@@ -173,11 +193,13 @@ export default function RegisterPage() {
         <SuccessStep
           onDone={() =>
             router.push(
-              role === "admin_posko" 
-                ? "/dashboard/admin" 
-                : role === "toko_mitra" 
-                  ? "/dashboard/toko" 
-                  : "/dashboard/donatur"
+              role === "admin_posko"
+                ? "/dashboard/admin"
+                : role === "toko_mitra"
+                  ? "/dashboard/toko"
+                  : role === "relawan_kurir"
+                    ? "/dashboard/kurir"
+                    : "/dashboard/donatur",
             )
           }
         />
