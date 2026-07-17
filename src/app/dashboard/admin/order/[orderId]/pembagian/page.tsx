@@ -55,7 +55,7 @@ export default function PembagianBantuanPage({ params }: { params: Promise<{ ord
   }
 
   if (completeResult) {
-    return <DistributionCompleteView result={completeResult} orderCode={data.order_code} />;
+    return <DistributionCompleteView result={completeResult} order={data} />;
   }
 
   const activeItem = activeItemId ? data.items.find((item) => item.item_id === activeItemId) : null;
