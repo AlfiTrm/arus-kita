@@ -1,6 +1,8 @@
 import { apiClient } from "@/shared/services/apiClient";
 import type {
   CourierArrivedData,
+  CourierArrivedPostData,
+  CourierArrivedPostResponse,
   CourierArrivedResponse,
   CourierHandoffTokenData,
   CourierHandoffTokenResponse,
@@ -38,8 +40,8 @@ export const courierTaskService = {
     return res.data;
   },
 
-  arrivedPost: async (orderId: string): Promise<CourierHandoffTokenData> => {
-    const res = await apiClient.post<CourierHandoffTokenResponse>(`/courier/tasks/${orderId}/arrived-post`);
+  arrivedPost: async (orderId: string): Promise<CourierArrivedPostData> => {
+    const res = await apiClient.post<CourierArrivedPostResponse>(`/courier/tasks/${orderId}/arrived-post`);
     return res.data;
   },
 
