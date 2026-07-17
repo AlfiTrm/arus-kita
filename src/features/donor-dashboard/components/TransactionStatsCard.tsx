@@ -9,10 +9,6 @@ export function TransactionStatsCard({
   transactions: DonorTransaction[];
   profile: DonorProfile | null;
 }) {
-  const saldoRefund = transactions
-    .filter((t) => t.status === "refunded")
-    .reduce((sum, t) => sum + t.amount, 0);
-
   const completed = transactions.filter((t) => t.status === "completed");
   const verifiedPercentage =
     completed.length > 0
@@ -22,7 +18,9 @@ export function TransactionStatsCard({
   return (
     <div className="mx-6 mt-4 rounded-2xl bg-main p-4 text-white">
       <p className="text-xs text-white/70">Saldo donasi</p>
-      <p className="mt-1 text-2xl font-bold">{formatRupiah(saldoRefund)}</p>
+      <p className="mt-1 text-2xl font-bold">
+        {profile ? formatRupiah(profile.undistributed_donation_amount) : "-"}
+      </p>
 
       <div className="mt-4 flex items-center justify-between border-t border-white/15 pt-3 text-center">
         <div className="flex-1">

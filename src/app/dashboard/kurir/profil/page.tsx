@@ -1,10 +1,19 @@
+"use client";
+
+import { CourierProfileSkeleton } from "@/features/courier-dashboard/components/CourierProfileSkeleton";
+import { CourierProfileView } from "@/features/courier-dashboard/components/CourierProfileView";
+import { useCourierProfile } from "@/features/courier-dashboard/hooks/useCourierProfile";
+
 export default function CourierProfilPage() {
-  return (
-    <div className="px-6 pt-6">
-      <h1 className="text-xl font-bold text-black">Profil</h1>
-      <p className="mt-4 rounded-2xl border border-dashed border-black/10 px-4 py-6 text-center text-sm text-black/40">
-        Profil kurir belum tersedia.
-      </p>
-    </div>
-  );
+  const { profile, error, isLoading } = useCourierProfile();
+
+  if (isLoading) {
+    return <CourierProfileSkeleton />;
+  }
+
+  if (error || !profile) {
+    return <p className="px-6 pt-6 text-sm text-error">{error ?? "Profil tidak ditemukan"}</p>;
+  }
+
+  return <CourierProfileView profile={profile} />;
 }

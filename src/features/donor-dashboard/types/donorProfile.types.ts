@@ -14,6 +14,8 @@ export interface DonorProfile {
   level: string;
   total_donated_amount: number;
   total_donated_amount_text: string;
+  undistributed_donation_amount: number;
+  undistributed_donation_amount_text: string;
   supported_post_count: number;
   active_points: number;
 }

@@ -8,6 +8,7 @@ import PressButton from "@/shared/components/PressButton";
 import { haversineKm } from "@/shared/utils/geo";
 import { CourierDeliveryMapLoader } from "./CourierDeliveryMapLoader";
 import { CourierHandoffQr } from "./CourierHandoffQr";
+import { CourierStoreHandoffScan } from "./CourierStoreHandoffScan";
 import { courierTaskService } from "../services/courierTaskService";
 import type { CourierHandoffTokenData, CourierTaskDetail } from "../types/courierTask.types";
 
@@ -17,9 +18,11 @@ export function CourierDeliveryView({ task }: { task: CourierTaskDetail }) {
 
   const [arrivedAtStore, setArrivedAtStore] = useState(false);
   const [arrivedAt, setArrivedAt] = useState<string | null>(task.picked_up_at);
+  const [custodyHash, setCustodyHash] = useState<string | null>(null);
   const [isMarkingArrival, setIsMarkingArrival] = useState(false);
   const [arrivalError, setArrivalError] = useState<string | null>(null);
   const [handoffToken, setHandoffToken] = useState<CourierHandoffTokenData | null>(null);
+  const [isScanningStore, setIsScanningStore] = useState(false);
 
   const isPickedUp = arrivedAtStore || Boolean(task.picked_up_at);
 
@@ -27,9 +30,8 @@ export function CourierDeliveryView({ task }: { task: CourierTaskDetail }) {
     setIsMarkingArrival(true);
     setArrivalError(null);
     try {
-      const data = await courierTaskService.arrived(task.order_id);
-      setArrivedAt(data.arrived_at);
-      setArrivedAtStore(true);
+      await courierTaskService.arrived(task.order_id);
+      setIsScanningStore(true);
     } catch (err) {
       setArrivalError(err instanceof Error ? err.message : "Gagal menandai kedatangan");
     } finally {
@@ -48,6 +50,22 @@ export function CourierDeliveryView({ task }: { task: CourierTaskDetail }) {
     } finally {
       setIsMarkingArrival(false);
     }
+  }
+
+  if (isScanningStore) {
+    return (
+      <CourierStoreHandoffScan
+        orderId={task.order_id}
+        storeName={task.store_name}
+        onCancel={() => setIsScanningStore(false)}
+        onSuccess={(data) => {
+          setArrivedAt(data.captured_at);
+          setCustodyHash(data.short_current_hash);
+          setArrivedAtStore(true);
+          setIsScanningStore(false);
+        }}
+      />
+    );
   }
 
   if (handoffToken) {
@@ -112,6 +130,7 @@ export function CourierDeliveryView({ task }: { task: CourierTaskDetail }) {
               <p className="text-sm font-bold">Kustodi barang: DI TANGAN ANDA</p>
               <p className="text-xs text-white/70">
                 {arrivedAt ? `Sejak ${new Date(arrivedAt).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })} · ` : ""}
+                {custodyHash ? `hash ${custodyHash} · ` : ""}
                 menunggu handshake posko
               </p>
             </div>
