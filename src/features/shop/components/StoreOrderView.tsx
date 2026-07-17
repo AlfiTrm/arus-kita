@@ -1,46 +1,29 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Bell, Clock, Lock } from "lucide-react";
-import { useStoreOrders } from "../hooks/useStoreOrders";
-import { useStoreProfile } from "../hooks/useStoreProfile";
-import { shopService } from "../services/shopService";
+import { Clock, Lock, Bell } from "lucide-react";
+import { useStoreOrderView } from "../hooks/useStoreOrderView";
 import { formatRupiah } from "@/shared/utils/formatCurrency";
 import PressButton from "@/shared/components/PressButton";
 import { StoreOrderViewSkeleton } from "./StoreSkeleton";
 
 export function StoreOrderView() {
-  const router = useRouter();
-  const [isAccepting, setIsAccepting] = useState(false);
-  const { data: profile, isLoading: profileLoading, error: profileError } = useStoreProfile();
-  const { data: orders, isLoading: ordersLoading, error: ordersError } = useStoreOrders();
+  const {
+    isAccepting,
+    profileLoading,
+    profileError,
+    ordersLoading,
+    ordersError,
+    storeName,
+    isOnline,
+    kycLabel,
+    reputationScore,
+    currentOrder,
+    history,
+    handleAccept
+  } = useStoreOrderView();
 
   if (profileLoading || ordersLoading) return <StoreOrderViewSkeleton />;
   if (profileError || ordersError) return <div className="p-6 text-center text-sm font-medium text-error">Gagal memuat beranda toko.</div>;
-
-  const storeName = profile?.name ?? "Toko Anda";
-  const isOnline = profile?.is_online ?? true;
-  const kycLabel = profile?.kyc_label ?? "KYC";
-  const reputationScore = profile?.reputation_score ?? "-";
-
-  const items = orders?.items ?? [];
-  const currentOrder = items[0];
-  const history = items.slice(1);
-
-  async function handleAccept() {
-    if (!currentOrder) return;
-    setIsAccepting(true);
-    try {
-      await shopService.acceptOrder(currentOrder.order_id);
-      router.push(`/dashboard/toko/orders/${currentOrder.order_id}`);
-    } catch (err) {
-      console.error(err);
-      alert("Gagal menyetujui pesanan");
-    } finally {
-      setIsAccepting(false);
-    }
-  }
 
   return (
     <div className="pb-28">

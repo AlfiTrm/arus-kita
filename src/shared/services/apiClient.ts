@@ -1,5 +1,5 @@
 import { env } from "@/shared/config/env";
-import { getToken } from "@/shared/utils/authSession";
+import { clearSession, getToken } from "@/shared/utils/authSession";
 
 function extractErrorMessage(body: unknown, status: number): string {
   if (body && typeof body === "object" && "message" in body && typeof body.message === "string") {
@@ -41,6 +41,10 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
   const data = contentType.includes("application/json") ? await res.json() : undefined;
 
   if (!res.ok) {
+    if (res.status === 401 && typeof window !== "undefined" && !window.location.pathname.startsWith("/login")) {
+      clearSession();
+      window.location.href = "/login";
+    }
     throw new ApiError(res.status, data);
   }
 
