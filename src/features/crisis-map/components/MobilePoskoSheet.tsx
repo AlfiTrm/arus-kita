@@ -1,22 +1,34 @@
 "use client";
 
 import { X } from "lucide-react";
+import { memo, useCallback, useMemo } from "react";
 import type { PoskoSummaryItem } from "../types/crisisMap.types";
 import { PoskoListItem } from "./PoskoListItem";
-import { PoskoListItemSkeleton } from "./PoskoListItemSkeleton";
 
-export function MobilePoskoSheet({
+const URGENCY_ORDER = { critical: 0, medium: 1, low: 2, funded: 3 };
+
+const MobilePoskoSheetComponent = ({
   posko,
   onSelect,
   onClose,
-  isLoading,
 }: {
   posko: PoskoSummaryItem[];
   onSelect: (postId: string) => void;
   onClose: () => void;
-  isLoading: boolean;
-}) {
-  const sorted = [...posko].sort((a, b) => a.funding_percentage - b.funding_percentage);
+}) => {
+  const sorted = useMemo(
+    () =>
+      [...posko].sort(
+        (a, b) =>
+          URGENCY_ORDER[a.urgency_level] - URGENCY_ORDER[b.urgency_level] ||
+          a.funding_percentage - b.funding_percentage,
+      ),
+    [posko],
+  );
+  const handleSelect = useCallback((postId: string) => {
+    onSelect(postId);
+    onClose();
+  }, [onClose, onSelect]);
 
   return (
     <div className="fixed inset-0 z-1100 flex flex-col justify-end md:hidden">
@@ -30,45 +42,38 @@ export function MobilePoskoSheet({
       <div
         role="dialog"
         aria-modal="true"
-        aria-label="Daftar posko aktif"
-        className="relative flex max-h-[70vh] flex-col rounded-t-3xl bg-surface"
+        aria-label="Daftar posko"
+        className="relative flex max-h-[min(76svh,42rem)] flex-col rounded-t-3xl bg-[#fbfaf6] pb-[env(safe-area-inset-bottom)] shadow-2xl"
       >
-        <div className="flex items-center justify-between border-b border-black/5 px-4 py-3">
-          <p className="text-sm font-semibold text-black">
-            {isLoading ? "Memuat..." : `${posko.length} posko aktif`}
+        <div className="flex min-h-16 items-center justify-between border-b border-[#103a32]/10 px-5 py-3">
+          <p className="font-editorial text-2xl text-[#262626]">
+            {posko.length + " posko"}
           </p>
           <button
             type="button"
             onClick={onClose}
             aria-label="Tutup daftar posko"
-            className="flex h-8 w-8 items-center justify-center rounded-full border border-black/10 text-black/60"
+            className="flex min-h-11 min-w-11 items-center justify-center rounded-full border border-[#103a32]/18 text-[#103a32] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-main"
           >
             <X size={16} />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-3">
-          {isLoading ? (
-            Array.from({ length: 4 }).map((_, i) => <PoskoListItemSkeleton key={i} />)
-          ) : (
-            <>
-              {sorted.map((p) => (
-                <PoskoListItem
-                  key={p.post_id}
-                  posko={p}
-                  onSelect={() => {
-                    onSelect(p.post_id);
-                    onClose();
-                  }}
-                />
-              ))}
-              {sorted.length === 0 && (
-                <p className="p-4 text-center text-sm text-black/40">Tidak ada posko yang cocok dengan filter ini.</p>
-              )}
-            </>
+        <div data-lenis-prevent className="min-h-0 flex-1 overflow-y-auto px-2 py-2">
+          {sorted.map((p) => (
+            <PoskoListItem
+              key={p.post_id}
+              posko={p}
+              onSelect={handleSelect}
+            />
+          ))}
+          {sorted.length === 0 && (
+            <p className="p-4 text-center text-sm text-[#526963]">Tidak ada lokasi yang cocok dengan filter ini.</p>
           )}
         </div>
       </div>
     </div>
   );
-}
+};
+
+export const MobilePoskoSheet = memo(MobilePoskoSheetComponent);

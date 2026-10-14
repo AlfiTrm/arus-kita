@@ -1,43 +1,38 @@
 "use client";
 
+import { ScrollReveal } from "@/shared/components/ScrollReveal";
 import { useTransparencyData } from "../hooks/useTransparencyData";
 import { AllocationBreakdown } from "./AllocationBreakdown";
 import { LedgerTable } from "./LedgerTable";
 import { MonthlyChart } from "./MonthlyChart";
 import { SummaryCards } from "./SummaryCards";
-import { TransparencyDashboardSkeleton } from "./TransparencyDashboardSkeleton";
 import { TransparencyHeader } from "./TransparencyHeader";
 
 export function TransparencyDashboard() {
-  const { data, error, isLoading } = useTransparencyData();
-
-  if (isLoading) {
-    return <TransparencyDashboardSkeleton />;
-  }
-
-  if (error) {
-    return (
-      <div className="container py-12">
-        <p className="text-center text-sm text-error">{error}</p>
-      </div>
-    );
-  }
-
-  if (!data) {
-    return null;
-  }
+  const data = useTransparencyData();
 
   return (
-    <div className="container flex flex-col gap-6 py-8">
-      <TransparencyHeader ledger={data.latest_ledger} />
-      <SummaryCards summary={data.summary} />
+    <div className="bg-[#fbfaf6]">
+      <div className="container flex flex-col gap-8 py-10 sm:gap-10 sm:py-14">
+        <ScrollReveal>
+          <TransparencyHeader ledger={data.latest_ledger} />
+        </ScrollReveal>
 
-      <div className="grid gap-4 lg:grid-cols-[2fr_1fr]">
-        <MonthlyChart data={data.monthly_disbursements} />
-        <AllocationBreakdown data={data.allocation_by_disaster} />
+        <ScrollReveal>
+          <SummaryCards summary={data.summary} />
+        </ScrollReveal>
+
+        <ScrollReveal>
+          <div className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:gap-14">
+            <MonthlyChart data={data.monthly_disbursements} />
+            <AllocationBreakdown data={data.allocation_by_disaster} />
+          </div>
+        </ScrollReveal>
+
+        <ScrollReveal>
+          <LedgerTable entries={data.latest_ledger} />
+        </ScrollReveal>
       </div>
-
-      <LedgerTable entries={data.latest_ledger} />
     </div>
   );
 }
