@@ -4,6 +4,11 @@ export interface Posko {
   post_id: string;
   name: string;
   address: string;
+  image_url?: string;
+  image_alt?: string;
+  image_caption?: string;
+  image_credit?: string;
+  image_source_url?: string;
   latitude: number;
   longitude: number;
   disaster_event: string;
@@ -26,6 +31,11 @@ export interface PoskoSummaryItem {
   post_id: string;
   name: string;
   address: string;
+  image_url?: string;
+  image_alt?: string;
+  image_caption?: string;
+  image_credit?: string;
+  image_source_url?: string;
   disaster_event: string;
   latest_report_title: string;
   funding_target: number;
