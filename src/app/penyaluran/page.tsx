@@ -1,13 +1,16 @@
 import { DistributionGrid } from "@/features/distributions/components/DistributionGrid";
+import { LandingFooter } from "@/features/landing/components/LandingFooter";
 import { LandingNavbar } from "@/features/landing/components/LandingNavbar";
+import { PublicScrollProvider } from "@/shared/components/PublicScrollProvider";
 
 export default function PenyaluranPage() {
   return (
-    <>
-      <LandingNavbar />
-      <main className="flex-1">
+    <PublicScrollProvider>
+      <div className="flex flex-1 flex-col bg-[#fbfaf6]">
+        <LandingNavbar />
         <DistributionGrid />
-      </main>
-    </>
+        <LandingFooter />
+      </div>
+    </PublicScrollProvider>
   );
 }
