@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Poppins, Inter } from "next/font/google";
+import { Lora, Poppins, Inter } from "next/font/google";
 import { PwaInstallCapture } from "@/shared/components/PwaInstallCapture";
 import { ServiceWorkerRegister } from "@/shared/components/ServiceWorkerRegister";
 import "@/shared/styles/globals.css";
@@ -11,6 +11,13 @@ const poppins = Poppins({
   variable: "--font-poppins",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+});
+
+const editorial = Lora({
+  variable: "--font-landing-editorial",
+  subsets: ["latin"],
+  weight: ["400"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -41,7 +48,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn("h-full", "antialiased", poppins.variable, "font-sans", inter.variable)}>
+    <html lang="id" className={cn("h-full", "antialiased", poppins.variable, editorial.variable, "font-sans", inter.variable)}>
       <body className="min-h-full flex flex-col">
         <PwaInstallCapture />
         <ServiceWorkerRegister />

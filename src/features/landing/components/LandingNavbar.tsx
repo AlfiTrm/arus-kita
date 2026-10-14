@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { ArrowUpRight, Menu, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { cn } from "@/lib/utils";
 import { InstallButton } from "@/shared/components/InstallButton";
 
 const NAV_LINKS = [
@@ -16,12 +17,57 @@ const NAV_LINKS = [
 export function LandingNavbar() {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuPanelRef = useRef<HTMLDivElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    document.body.style.overflow = isMenuOpen ? "hidden" : "";
+    if (!isMenuOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const focusFrame = window.requestAnimationFrame(() => {
+      menuPanelRef.current?.querySelector<HTMLElement>("[data-menu-first-focus]")?.focus();
+    });
+
+    const getFocusableElements = () =>
+      Array.from(
+        menuPanelRef.current?.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled])',
+        ) ?? [],
+      );
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setIsMenuOpen(false);
+        menuButtonRef.current?.focus();
+        return;
+      }
+
+      if (event.key !== "Tab") return;
+
+      const focusableElements = getFocusableElements();
+      if (focusableElements.length === 0) return;
+
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+      const focusIsInsideMenu = menuPanelRef.current?.contains(document.activeElement) ?? false;
+
+      if (event.shiftKey && (!focusIsInsideMenu || document.activeElement === firstElement)) {
+        event.preventDefault();
+        lastElement.focus();
+      } else if (!event.shiftKey && (!focusIsInsideMenu || document.activeElement === lastElement)) {
+        event.preventDefault();
+        firstElement.focus();
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      document.body.style.overflow = "";
+      window.cancelAnimationFrame(focusFrame);
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", handleKeyDown);
     };
   }, [isMenuOpen]);
 
@@ -31,25 +77,38 @@ export function LandingNavbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-9999 border-b border-black/5 bg-surface md:bg-surface/95 md:backdrop-blur">
-        <div className="container flex h-16 items-center justify-between gap-4">
-          <Link href="/" className="flex items-center" onClick={closeMenu}>
-            {/* eslint-disable-next-line @next/next/no-img-element -- static local SVG wordmark, no next/image optimization needed */}
-            <img src="/icon/aruskita-full.svg" alt="Arus Kita" className="h-6 w-auto" />
+      <header id="top" className="sticky top-0 z-9999 border-b border-[#103a32]/8 bg-[#fbfaf6]">
+        <div className="container relative flex h-16 items-center justify-between gap-4">
+          <Link
+            href="/"
+            aria-label="Arus Kita, beranda"
+            className="flex min-h-11 shrink-0 items-center focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-main"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element -- local brand mark is a small SVG asset */}
+            <img src="/icon/aruskita-icon.svg" alt="" className="h-8 w-auto object-contain" />
+            <span className="ml-2 hidden text-base font-semibold tracking-[-0.03em] text-[#008090] md:inline">
+              Arus Kita
+            </span>
           </Link>
 
-          <nav className="hidden items-center gap-8 text-sm font-medium md:flex">
+          <nav
+            aria-label="Navigasi utama"
+            className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-2 lg:flex"
+          >
             {NAV_LINKS.map((link) => {
               const isActive = pathname === link.href;
+
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={
+                  aria-current={isActive ? "page" : undefined}
+                  className={cn(
+                    "inline-flex min-h-11 items-center border-b-2 px-3.5 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-main motion-reduce:transition-none",
                     isActive
-                      ? "border-b-2 border-main pb-1 text-main"
-                      : "border-b-2 border-transparent pb-1 text-black/70 hover:text-black"
-                  }
+                      ? "border-main text-[#103a32]"
+                      : "border-transparent text-[#40534d] hover:border-[#103a32]/30 hover:text-main",
+                  )}
                 >
                   {link.label}
                 </Link>
@@ -57,67 +116,112 @@ export function LandingNavbar() {
             })}
           </nav>
 
-          <div className="hidden md:block">
-            <InstallButton className="px-5 py-2 text-xs" />
+          <div className="ml-auto hidden lg:block">
+            <InstallButton className="min-h-11 rounded-full px-5 py-2 text-sm" />
           </div>
 
           <button
+            ref={menuButtonRef}
             type="button"
             aria-expanded={isMenuOpen}
             aria-controls="landing-mobile-menu"
-            aria-label={isMenuOpen ? "Tutup menu navigasi" : "Buka menu navigasi"}
-            className="relative flex h-12 w-12 touch-manipulation items-center justify-center rounded-full border border-black/10 bg-white text-black shadow-[0_8px_20px_rgba(38,38,38,0.08)] transition hover:border-main/25 hover:text-main md:hidden"
+            aria-label={isMenuOpen ? "Tutup menu" : "Buka menu"}
+            className="ml-auto inline-flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-full border border-[#103a32]/18 px-3.5 text-sm font-medium text-[#103a32] transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-main motion-reduce:transition-none lg:hidden"
             onClick={() => setIsMenuOpen((current) => !current)}
           >
-            {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            {isMenuOpen ? <X size={18} strokeWidth={1.8} /> : <Menu size={18} strokeWidth={1.8} />}
+            <span>Menu</span>
           </button>
         </div>
       </header>
 
       <div
         id="landing-mobile-menu"
-        onClick={closeMenu}
-        className={`fixed inset-0 z-9998 bg-black/20 backdrop-blur-sm transition-opacity duration-300 ease-out md:hidden ${
-          isMenuOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
-        }`}
+        ref={menuPanelRef}
+        data-lenis-prevent
+        role="dialog"
+        aria-modal={isMenuOpen || undefined}
+        aria-hidden={!isMenuOpen}
+        inert={!isMenuOpen}
+        aria-label="Menu navigasi Arus Kita"
+        className={cn(
+          "fixed inset-0 z-10000 flex h-[100svh] flex-col overflow-y-auto bg-[#fbfaf6] px-5 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] transition-[opacity,transform,visibility] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none sm:px-8 lg:hidden",
+          isMenuOpen ? "visible translate-x-0 opacity-100" : "invisible translate-x-full opacity-0",
+        )}
       >
-        <div
-          onClick={(e) => e.stopPropagation()}
-          className={`container flex min-h-dvh flex-col px-4 pt-24 pb-6 transition-all duration-300 ease-out ${
-            isMenuOpen ? "translate-y-0 opacity-100" : "-translate-y-3 opacity-0"
-          }`}
-        >
-          <div className="rounded-[28px] bg-white p-6 shadow-[0_24px_64px_rgba(38,38,38,0.12)]">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-main/70">Navigasi</p>
+        <div className="container flex min-h-16 w-full items-center justify-between border-b border-[#103a32]/10">
+          <Link
+            href="/"
+            aria-label="Arus Kita, beranda"
+            data-menu-first-focus
+            onClick={closeMenu}
+            className="flex min-h-11 items-center focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-main"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element -- local brand mark is a small SVG asset */}
+            <img src="/icon/aruskita-icon.svg" alt="" className="h-8 w-auto object-contain" />
+            <span className="ml-2 hidden text-base font-semibold tracking-[-0.03em] text-[#008090] md:inline">
+              Arus Kita
+            </span>
+          </Link>
+          <button
+            type="button"
+            onClick={() => {
+              closeMenu();
+              menuButtonRef.current?.focus();
+            }}
+            className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[#103a32]/18 px-4 text-sm font-medium text-[#103a32] transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-main motion-reduce:transition-none"
+          >
+            <X size={17} aria-hidden="true" />
+            Tutup
+          </button>
+        </div>
 
-            <nav className="mt-4 flex flex-col">
-              {NAV_LINKS.map((link) => {
-                const isActive = pathname === link.href;
-                return (
+        <div className="container flex w-full flex-1 flex-col py-8">
+          <h2 className="font-editorial text-3xl font-normal tracking-[-0.03em] text-[#262626] sm:text-4xl">
+            Pilih halaman.
+          </h2>
+
+          <nav aria-label="Halaman Arus Kita" className="mt-6 flex flex-col">
+            {NAV_LINKS.map((link, index) => {
+              const isActive = pathname === link.href;
+
+              return (
+                <div
+                  key={link.href}
+                  className={cn(
+                    "translate-y-2 opacity-0 transition-[opacity,transform] duration-300 motion-reduce:transition-none",
+                    isMenuOpen && "translate-y-0 opacity-100",
+                  )}
+                  style={{ transitionDelay: isMenuOpen ? `${90 + index * 55}ms` : "0ms" }}
+                >
                   <Link
-                    key={link.href}
                     href={link.href}
+                    aria-current={isActive ? "page" : undefined}
                     onClick={closeMenu}
-                    className={
+                    className={cn(
+                      "group flex min-h-[4.5rem] items-center justify-between border-b border-[#103a32]/12 py-3 text-[1.35rem] tracking-[-0.025em] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-main sm:text-2xl",
                       isActive
-                        ? "rounded-2xl bg-secondary px-4 py-4 text-base font-semibold text-main"
-                        : "rounded-2xl px-4 py-4 text-base font-medium text-black/72 transition-colors hover:bg-black/3 hover:text-black"
-                    }
+                        ? "font-semibold text-main"
+                        : "font-medium text-[#103a32] hover:text-main",
+                    )}
                   >
-                    {link.label}
+                    <span>{link.label}</span>
+                    <span className="flex items-center gap-3 text-sm font-normal text-[#789087]">
+                      <span>0{index + 1}</span>
+                      <ArrowUpRight
+                        size={18}
+                        className="opacity-60 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                        aria-hidden="true"
+                      />
+                    </span>
                   </Link>
-                );
-              })}
-            </nav>
-          </div>
+                </div>
+              );
+            })}
+          </nav>
 
-          <div className="mt-auto rounded-[28px] bg-secondary/55 p-5 shadow-[0_20px_48px_rgba(2,128,144,0.16)]">
-            <p className="max-w-xs text-sm font-medium leading-6 text-black">
-              Pasang Arus Kita ke layar utama untuk masuk ke mode app dan langsung mulai dari splash screen.
-            </p>
-            <div className="mt-4">
-              <InstallButton className="w-full justify-center px-5 py-3 text-sm" />
-            </div>
+          <div className="mt-auto pt-8">
+            {isMenuOpen && <InstallButton className="min-h-12 w-full justify-center rounded-full px-5 py-3 text-sm" />}
           </div>
         </div>
       </div>

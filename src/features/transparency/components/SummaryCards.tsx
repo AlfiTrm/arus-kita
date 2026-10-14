@@ -1,52 +1,27 @@
-import { RefreshCcw, ShieldCheck, TrendingUp, Wallet } from "lucide-react";
 import { formatRupiahCompact } from "@/shared/utils/formatCurrency";
 import type { TransparencySummary } from "../types/transparency.types";
 
 export function SummaryCards({ summary }: { summary: TransparencySummary }) {
-  const disbursedPercent =
-    summary.total_donation_collected > 0
-      ? ((summary.total_disbursed_verified / summary.total_donation_collected) * 100).toFixed(1)
-      : "0";
-
-  const cards = [
-    {
-      icon: Wallet,
-      label: "Total donasi terkumpul",
-      value: formatRupiahCompact(summary.total_donation_collected),
-      caption: null,
-    },
-    {
-      icon: TrendingUp,
-      label: "Tersalurkan & terverifikasi",
-      value: formatRupiahCompact(summary.total_disbursed_verified),
-      caption: `${disbursedPercent}% dari terkumpul · sisanya terkunci di order aktif`,
-    },
-    {
-      icon: RefreshCcw,
-      label: "Refund otomatis",
-      value: formatRupiahCompact(summary.refund_automatic),
-      caption: "target tak tercapai 7 hari → kembali ke donatur",
-    },
-    {
-      icon: ShieldCheck,
-      label: "Verified fulfillment rate",
-      value: `${summary.verified_fulfillment_rate}%`,
-      caption: "foto + GPS valid · target ≥90%",
-    },
+  const metrics = [
+    { label: "Donasi terkumpul", value: summary.total_donation_collected },
+    { label: "Sudah disalurkan", value: summary.total_disbursed },
+    { label: "Sedang diproses", value: summary.total_in_process },
+    { label: "Dikembalikan", value: summary.refund_automatic },
   ];
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      {cards.map((card) => (
-        <div key={card.label} className="rounded-2xl border border-black/5 bg-white p-5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-main/10 text-main">
-            <card.icon size={18} />
-          </span>
-          <p className="mt-3 text-xs text-black/50">{card.label}</p>
-          <p className="mt-1 text-2xl font-bold text-black">{card.value}</p>
-          {card.caption && <p className="mt-1 text-xs leading-5 text-black/40">{card.caption}</p>}
+    <section
+      aria-label="Ringkasan arus bantuan"
+      className="grid grid-cols-2 divide-x divide-y divide-[#103a32]/12 border-y border-[#103a32]/12 sm:grid-cols-4 sm:divide-y-0"
+    >
+      {metrics.map((metric) => (
+        <div key={metric.label} className="flex min-h-32 flex-col justify-center gap-2 px-4 py-5 sm:px-6">
+          <p className="font-editorial text-[clamp(1.75rem,4vw,2.75rem)] leading-none tracking-[-0.035em] text-[#103a32]">
+            {formatRupiahCompact(metric.value)}
+          </p>
+          <p className="text-sm leading-5 text-[#40534d]">{metric.label}</p>
         </div>
       ))}
-    </div>
+    </section>
   );
 }

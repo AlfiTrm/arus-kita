@@ -1,8 +1,8 @@
 export interface TransparencySummary {
   total_donation_collected: number;
-  total_disbursed_verified: number;
+  total_disbursed: number;
+  total_in_process: number;
   refund_automatic: number;
-  verified_fulfillment_rate: number;
 }
 
 export interface MonthlyDisbursement {
@@ -16,12 +16,15 @@ export interface DisasterAllocation {
   percentage: number;
 }
 
+export type TransactionFlow = "Masuk" | "Disalurkan" | "Dikembalikan";
+
 export interface LedgerEntry {
   occurred_at: string;
   event: string;
   post_name: string;
-  value_label: string;
-  hash: string;
+  value_amount: number;
+  flow: TransactionFlow;
+  reference_id: string;
 }
 
 export interface TransparencyData {
@@ -29,10 +32,4 @@ export interface TransparencyData {
   monthly_disbursements: MonthlyDisbursement[];
   allocation_by_disaster: DisasterAllocation[];
   latest_ledger: LedgerEntry[];
-}
-
-export interface DashboardTransparencyResponse {
-  status: { code: number; isSuccess: boolean };
-  message: string;
-  data: TransparencyData;
 }

@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { hasShownSplash } from "@/shared/config/pwaSession";
+import { PublicScrollProvider } from "@/shared/components/PublicScrollProvider";
 import { useStandaloneMode } from "@/shared/hooks/useStandaloneMode";
 
 export function LandingModeGate({ children }: { children: React.ReactNode }) {
@@ -14,9 +15,9 @@ export function LandingModeGate({ children }: { children: React.ReactNode }) {
     router.replace(hasShownSplash() ? "/login" : "/splashscreen");
   }, [isResolved, isStandalone, router]);
 
-  if (!isResolved || isStandalone) {
+  if (isStandalone) {
     return null;
   }
 
-  return <>{children}</>;
+  return <PublicScrollProvider>{children}</PublicScrollProvider>;
 }
